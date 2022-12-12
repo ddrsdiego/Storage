@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Read" />
+      <Folder Include="Write" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Rydo.Storage\Rydo.Storage.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CSharpFunctionalExtensions" Version="2.34.3" />
+      <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+    </ItemGroup>
+
+</Project>

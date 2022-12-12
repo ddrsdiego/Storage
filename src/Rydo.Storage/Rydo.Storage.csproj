@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <PackageDescription>Storage</PackageDescription>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CSharpFunctionalExtensions" Version="2.34.3" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+        <PackageReference Include="prometheus-net" Version="6.0.0" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="5.0.2" />
+        <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="5.0.2" />
+        <PackageReference Include="prometheus-net.DotNetRuntime" Version="4.2.4" />
+        <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+        <PackageReference Include="System.Text.Json" Version="6.0.6" />
+        <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Middlewares\Read" />
+        <Folder Include="Middlewares\Write" />
+    </ItemGroup>
+
+</Project>
