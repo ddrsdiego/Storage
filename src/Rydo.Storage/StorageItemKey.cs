@@ -4,12 +4,12 @@ namespace Rydo.Storage
 
     public readonly struct StorageItemKey
     {
-        public StorageItemKey(string? key)
+        public StorageItemKey(string key)
             : this(key, string.Empty)
         {
         }
 
-        public StorageItemKey(string? key, string? sortKey)
+        public StorageItemKey(string key, string sortKey)
         {
             Key = key;
             SortKey = sortKey;
@@ -17,11 +17,11 @@ namespace Rydo.Storage
 
         public bool IsComposed => !string.IsNullOrEmpty(Key) && !string.IsNullOrEmpty(SortKey);
 
-        public readonly string? Key;
-        public readonly string? SortKey;
-        public string? Value => SanitizeKey();
+        public readonly string Key;
+        public readonly string SortKey;
+        public string Value => SanitizeKey();
 
-        internal string? SanitizeKey() => string.IsNullOrEmpty(SortKey) ? Key : $"{Key}-{SortKey}";
+        internal string SanitizeKey() => string.IsNullOrEmpty(SortKey) ? Key : $"{Key}-{SortKey}";
 
         public override bool Equals(object obj)
         {

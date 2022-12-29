@@ -8,7 +8,7 @@
 
     public interface IModelTypeContextContainer
     {
-        ImmutableDictionary<string, ModelTypeContext>? Entries { get; }
+        ImmutableDictionary<string, ModelTypeContext> Entries { get; }
         
         void AddModelType(ModelTypeContext modelTypeContext);
 

@@ -4,8 +4,8 @@ namespace Rydo.Storage.Write.Async
 
     public interface IStorageClientWriterAsync
     {
-        ValueTask UpsertAsync<T>(string? key, T payload, FutureWriteResponse futureWriteResponse);
+        ValueTask UpsertAsync<T>(string key, T payload, FutureWriteResponse futureWriteResponse);
 
-        ValueTask UpsertAsync<T>(string? key, string sortKey, T payload, FutureWriteResponse futureWriteResponse);
+        ValueTask UpsertAsync<T>(string key, string sortKey, T payload, FutureWriteResponse futureWriteResponse);
     }
 }

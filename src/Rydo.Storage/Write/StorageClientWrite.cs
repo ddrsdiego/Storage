@@ -20,22 +20,22 @@
                                         throw new ArgumentNullException(nameof(storageClientWriterAsync));
         }
 
-        public ValueTask<WriteResponse> Upsert<T>(string? key, T payload)
+        public ValueTask<WriteResponse> Upsert<T>(string key, T payload)
         {
             return _storageClientWriteSync.Upsert(key, payload);
         }
 
-        public ValueTask<WriteResponse> Upsert<T>(string? key, string sortKey, T payload)
+        public ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload)
         {
             return _storageClientWriteSync.Upsert(key, sortKey, payload);
         }
 
-        public ValueTask UpsertAsync<T>(string? key, T payload, FutureWriteResponse futureWriteResponse)
+        public ValueTask UpsertAsync<T>(string key, T payload, FutureWriteResponse futureWriteResponse)
         {
             return _storageClientWriterAsync.UpsertAsync(key, payload, futureWriteResponse);
         }
 
-        public ValueTask UpsertAsync<T>(string? key, string sortKey, T payload, FutureWriteResponse futureWriteResponse)
+        public ValueTask UpsertAsync<T>(string key, string sortKey, T payload, FutureWriteResponse futureWriteResponse)
         {
             return _storageClientWriterAsync.UpsertAsync(key, sortKey, payload, futureWriteResponse);
         }

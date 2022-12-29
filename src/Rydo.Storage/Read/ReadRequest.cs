@@ -20,8 +20,8 @@
             RequestAt = DateTime.Now;
         }
 
-        public readonly string? Key;
-        public readonly string? SortKey;
+        public readonly string Key;
+        public readonly string SortKey;
         public readonly IModelTypeDefinition Definition;
         public readonly FutureReadResponse Response;
         public readonly DateTime RequestAt;

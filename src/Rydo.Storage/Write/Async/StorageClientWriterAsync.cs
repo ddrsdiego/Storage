@@ -21,17 +21,17 @@ namespace Rydo.Storage.Write.Async
             _modelTypeContextContainer = modelTypeContextContainer;
         }
 
-        public ValueTask UpsertAsync<T>(string? key, T payload, FutureWriteResponse futureWriteResponse)
+        public ValueTask UpsertAsync<T>(string key, T payload, FutureWriteResponse futureWriteResponse)
         {
             return InternalUpsertAsync(key, string.Empty, payload, futureWriteResponse);
         }
 
-        public ValueTask UpsertAsync<T>(string? key, string sortKey, T payload, FutureWriteResponse futureWriteResponse)
+        public ValueTask UpsertAsync<T>(string key, string sortKey, T payload, FutureWriteResponse futureWriteResponse)
         {
             return InternalUpsertAsync(key, sortKey, payload, futureWriteResponse);
         }
 
-        private ValueTask InternalUpsertAsync<T>(string? key, string sortKey, T payload,
+        private ValueTask InternalUpsertAsync<T>(string key, string sortKey, T payload,
             FutureWriteResponse futureWriteResponse)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));

@@ -10,6 +10,6 @@
         /// <param name="context">The message context</param>
         /// <param name="next">A delegate to the next middleware</param>
         /// <returns></returns>
-        Task? Invoke(MessageConsumerContext context, MiddlewareDelegate next);
+        Task Invoke(MessageConsumerContext context, MiddlewareDelegate next);
     }
 }

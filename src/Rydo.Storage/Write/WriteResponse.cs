@@ -11,7 +11,7 @@ namespace Rydo.Storage.Write
 
     public readonly struct WriteResponse
     {
-        private WriteResponse(WriteResponseStatus status, WriteRequest request, Exception? exception)
+        private WriteResponse(WriteResponseStatus status, WriteRequest request, Exception exception)
         {
             Status = status;
             Exception = exception;
@@ -22,14 +22,14 @@ namespace Rydo.Storage.Write
 
         public readonly DateTime CreatedAt;
         public readonly WriteRequest Request;
-        public readonly Exception? Exception;
+        public readonly Exception Exception;
         public readonly int ElapsedTimeInSeconds;
         public readonly WriteResponseStatus Status;
 
         public static WriteResponse GetCreatedInstance(WriteRequest request) =>
             new WriteResponse(WriteResponseStatus.Created, request, null);
 
-        public static WriteResponse GetErrorInstance(WriteRequest request, Exception? exception) =>
+        public static WriteResponse GetErrorInstance(WriteRequest request, Exception exception) =>
             new WriteResponse(WriteResponseStatus.InternalServerError, request, exception);
     }
 }

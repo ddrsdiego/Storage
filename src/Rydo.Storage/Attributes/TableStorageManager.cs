@@ -8,20 +8,20 @@
     {
         private readonly object _lockObject;
         private readonly ILogger<TableStorageManager> _logger;
-        private ImmutableDictionary<string, string?> _cache;
+        private ImmutableDictionary<string, string> _cache;
 
         public TableStorageManager(ILogger<TableStorageManager> logger)
         {
             _logger = logger;
             _lockObject = new object();
-            _cache = ImmutableDictionary<string, string?>.Empty;
+            _cache = ImmutableDictionary<string, string>.Empty;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryExtractTopicName(object? model, out string? tableName) =>
+        public bool TryExtractTopicName(object model, out string tableName) =>
             ExecuteTryExtractTopicName(model, out tableName);
 
-        private bool ExecuteTryExtractTopicName(object? model, out string? tableName)
+        private bool ExecuteTryExtractTopicName(object model, out string tableName)
         {
             tableName = string.Empty;
 

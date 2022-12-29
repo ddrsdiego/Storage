@@ -11,7 +11,7 @@
         /// <param name="payload"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask<WriteResponse> Upsert<T>(string? key, T payload);
+        ValueTask<WriteResponse> Upsert<T>(string key, T payload);
 
         /// <summary>
         /// 
@@ -21,7 +21,7 @@
         /// <param name="payload"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask<WriteResponse> Upsert<T>(string? key, string sortKey, T payload);
+        ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload);
 
         /// <summary>
         /// 
@@ -31,7 +31,7 @@
         /// <param name="futureWriteResponse"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask UpsertAsync<T>(string? key, T payload, FutureWriteResponse futureWriteResponse);
+        ValueTask UpsertAsync<T>(string key, T payload, FutureWriteResponse futureWriteResponse);
 
         /// <summary>
         /// 
@@ -42,7 +42,7 @@
         /// <param name="futureWriteResponse"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask UpsertAsync<T>(string? key, string sortKey, T payload, FutureWriteResponse futureWriteResponse);
+        ValueTask UpsertAsync<T>(string key, string sortKey, T payload, FutureWriteResponse futureWriteResponse);
 
         /// <summary>
         /// 

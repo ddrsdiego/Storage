@@ -9,7 +9,7 @@
 
     public interface IWriteBatchRequest : IBatchRequest, IEnumerable<WriteRequest>
     {
-        string? ModeTypeName { get; }
+        string ModeTypeName { get; }
 
         IEnumerable<StorageItem> StorageItems { get; }
 
@@ -19,7 +19,7 @@
     public sealed class WriteBatchRequest : IWriteBatchRequest
     {
         private readonly object _sync = new object();
-        private readonly Dictionary<string, WriteRequest>? _writeRequests;
+        private readonly Dictionary<string, WriteRequest> _writeRequests;
 
         internal WriteBatchRequest(int capacity)
         {

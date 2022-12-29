@@ -3,14 +3,12 @@
     using System;
     using System.Buffers;
     using System.Text.Json;
-    using CSharpFunctionalExtensions;
     using Providers;
-    using Read;
 
     public readonly struct WriteRequest
     {
-        internal WriteRequest(WriteRequestOperation operation, IModelTypeDefinition? modelTypeDefinition, string? key,
-            string? sortKey, byte[]? payload, FutureWriteResponse response)
+        internal WriteRequest(WriteRequestOperation operation, IModelTypeDefinition modelTypeDefinition, string key,
+            string sortKey, byte[] payload, FutureWriteResponse response)
         {
             ModelTypeDefinition = modelTypeDefinition;
             Key = key ?? throw new ArgumentNullException(nameof(key));
@@ -25,14 +23,14 @@
             RequestedAt = DateTime.Now;
         }
         
-        public readonly string? Key;
-        public readonly string? SortKey;
-        public readonly byte[]? Payload;
+        public readonly string Key;
+        public readonly string SortKey;
+        public readonly byte[] Payload;
         public readonly DateTime RequestedAt;
 
         internal readonly FutureWriteResponse Response;
         internal readonly WriteRequestOperation Operation;
-        internal readonly IModelTypeDefinition? ModelTypeDefinition;
+        internal readonly IModelTypeDefinition ModelTypeDefinition;
 
         public T GetRaw<T>()
         {

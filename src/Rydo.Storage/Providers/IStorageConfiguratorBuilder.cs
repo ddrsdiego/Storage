@@ -25,6 +25,6 @@
 
         IStorageConfiguratorBuilder<TModelType> SetReadBufferSize(int readBufferSize);
 
-        void TryAddModelType<T>(Action<TModelType>? definition = default);
+        void TryAddModelType<T>(Action<TModelType> definition = default);
     }
 }

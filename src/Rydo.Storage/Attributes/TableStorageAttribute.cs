@@ -20,7 +20,7 @@
     internal static class ModelExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool TryExtractTableName(this object? model, out string? tableName)
+        internal static bool TryExtractTableName(this object model, out string tableName)
         {
             tableName = string.Empty;
 
@@ -49,7 +49,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool TryExtractTableName<T>(out string? tableName)
+        internal static bool TryExtractTableName<T>(out string tableName)
         {
             tableName = string.Empty;
 

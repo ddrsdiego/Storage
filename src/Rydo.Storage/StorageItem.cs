@@ -4,7 +4,7 @@
 
     public readonly struct StorageItem
     {
-        public StorageItem(string key, string? sortKey, byte[] payload)
+        public StorageItem(string key, string sortKey, byte[] payload)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
 

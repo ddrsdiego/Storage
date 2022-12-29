@@ -9,27 +9,27 @@
 
     public interface IMiddlewareExecutor
     {
-        Task? Execute(IServiceScope? scope, MessageConsumerContext context,
+        Task Execute(IServiceScope scope, MessageConsumerContext context,
             Func<MessageConsumerContext, Task> nextOperation);
     }
 
     public sealed class MiddlewareExecutor : IMiddlewareExecutor
     {
-        private readonly ILogger<MiddlewareExecutor>? _logger;
-        private readonly Dictionary<int, IMessageMiddleware?> _consumerMiddlewares;
-        private readonly IMiddlewareConfigurationContainer? _middlewareConfigurationContainer;
+        private readonly ILogger<MiddlewareExecutor> _logger;
+        private readonly Dictionary<int, IMessageMiddleware> _consumerMiddlewares;
+        private readonly IMiddlewareConfigurationContainer _middlewareConfigurationContainer;
         
-        internal MiddlewareExecutor(ILogger<MiddlewareExecutor>? logger,
-            IMiddlewareConfigurationContainer? middlewareConfigurationContainer)
+        internal MiddlewareExecutor(ILogger<MiddlewareExecutor> logger,
+            IMiddlewareConfigurationContainer middlewareConfigurationContainer)
         {
             _logger = logger;
             _middlewareConfigurationContainer = middlewareConfigurationContainer;
-            _consumerMiddlewares = new Dictionary<int, IMessageMiddleware?>();
+            _consumerMiddlewares = new Dictionary<int, IMessageMiddleware>();
         }
 
         internal static MiddlewareExecutorBuilder Builder() => new MiddlewareExecutorBuilder();
 
-        public Task? Execute(IServiceScope? scope, MessageConsumerContext context,
+        public Task Execute(IServiceScope scope, MessageConsumerContext context,
             Func<MessageConsumerContext, Task> nextOperation)
         {
             const int startIndexPosition = 0;
@@ -39,10 +39,10 @@
             return ExecuteDefinition(startIndexPosition, scope, context, nextOperation);
         }
 
-        private Task? ExecuteDefinition(int index, IServiceScope? scope, MessageConsumerContext context,
+        private Task ExecuteDefinition(int index, IServiceScope scope, MessageConsumerContext context,
             Func<MessageConsumerContext, Task> nextOperation)
         {
-            MiddlewareConfiguration? configuration = default;
+            MiddlewareConfiguration configuration = default;
 
             if (index == _middlewareConfigurationContainer?.TotalConfigurations)
                 return nextOperation(context);
@@ -63,10 +63,10 @@
                 });
         }
 
-        private IMessageMiddleware? ResolveInstance(int index, IServiceScope? scope,
-            MiddlewareConfiguration? configuration)
+        private IMessageMiddleware ResolveInstance(int index, IServiceScope scope,
+            MiddlewareConfiguration configuration)
         {
-            IMessageMiddleware? messageMiddleware = default;
+            IMessageMiddleware messageMiddleware = default;
 
             try
             {

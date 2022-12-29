@@ -39,7 +39,7 @@
 
     internal class OffsetCommitManagerMiddleware : IMessageMiddleware
     {
-        public Task? Invoke(MessageConsumerContext context, MiddlewareDelegate next)
+        public Task Invoke(MessageConsumerContext context, MiddlewareDelegate next)
         {
             throw new System.NotImplementedException();
         }
@@ -47,7 +47,7 @@
 
     internal class DeadLetterHandleMiddleware : IMessageMiddleware
     {
-        public Task? Invoke(MessageConsumerContext context, MiddlewareDelegate next)
+        public Task Invoke(MessageConsumerContext context, MiddlewareDelegate next)
         {
             throw new System.NotImplementedException();
         }
@@ -55,7 +55,7 @@
 
     internal class CustomConsumerMiddleware : IMessageMiddleware
     {
-        public Task? Invoke(MessageConsumerContext context, MiddlewareDelegate next)
+        public Task Invoke(MessageConsumerContext context, MiddlewareDelegate next)
         {
             throw new System.NotImplementedException();
         }
@@ -63,7 +63,7 @@
 
     internal class SerializerConsumerMiddleware : IMessageMiddleware
     {
-        public Task? Invoke(MessageConsumerContext context, MiddlewareDelegate next)
+        public Task Invoke(MessageConsumerContext context, MiddlewareDelegate next)
         {
             throw new System.NotImplementedException();
         }

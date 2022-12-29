@@ -25,9 +25,9 @@ namespace Rydo.Storage.Write.Sync
             _tableStorageManager = tableStorageManager;
         }
 
-        public ValueTask<WriteResponse> Upsert<T>(string? key, T payload) => Upsert(key, string.Empty, payload);
+        public ValueTask<WriteResponse> Upsert<T>(string key, T payload) => Upsert(key, string.Empty, payload);
 
-        public async ValueTask<WriteResponse> Upsert<T>(string? key, string sortKey, T payload)
+        public async ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (payload == null) throw new ArgumentNullException(nameof(payload));

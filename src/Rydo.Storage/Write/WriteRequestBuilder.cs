@@ -9,10 +9,10 @@ namespace Rydo.Storage.Write
     {
         private readonly WriteRequestOperation _operation;
         private readonly FutureWriteResponse _futureWriteResponse;
-        private string? _key;
-        private string? _shortKey;
-        private byte[]? _payload;
-        private IModelTypeDefinition? _modelTypeDefinition;
+        private string _key;
+        private string _shortKey;
+        private byte[] _payload;
+        private IModelTypeDefinition _modelTypeDefinition;
 
         public WriteRequestBuilder(WriteRequestOperation operation, FutureWriteResponse futureWriteResponse)
         {
@@ -29,7 +29,7 @@ namespace Rydo.Storage.Write
             return this;
         }
 
-        public WriteRequestBuilder WithSortKey(string? shortKey)
+        public WriteRequestBuilder WithSortKey(string shortKey)
         {
             _shortKey = shortKey;
             return this;

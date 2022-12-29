@@ -5,8 +5,8 @@
 
     internal sealed class MiddlewareExecutorBuilder
     {
-        private ILogger<MiddlewareExecutor>? _logger;
-        private IMiddlewareConfigurationContainer? _middlewareConfigContainer;
+        private ILogger<MiddlewareExecutor> _logger;
+        private IMiddlewareConfigurationContainer _middlewareConfigContainer;
 
         public MiddlewareExecutorBuilder WithLogger(ILogger<MiddlewareExecutor> logger)
         {
@@ -22,7 +22,7 @@
             return this;
         }
 
-        public IMiddlewareExecutor? Build()
+        public IMiddlewareExecutor Build()
         {
             return new MiddlewareExecutor(_logger, _middlewareConfigContainer);
         }

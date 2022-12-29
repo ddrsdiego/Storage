@@ -27,8 +27,7 @@
         [HttpGet("{accountNumber}")]
         public ValueTask GetByAccountNumber(string accountNumber)
         {
-            var response = _storageClient.Reader.Read<Customer>(accountNumber).AsTask();
-
+            var response = _storageClient.Reader.Read<Customer>(accountNumber);
             return response.WriteResponseAsync(Response);
         }
 

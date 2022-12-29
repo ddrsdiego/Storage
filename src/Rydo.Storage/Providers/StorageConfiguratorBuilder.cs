@@ -46,6 +46,6 @@ namespace Rydo.Storage.Providers
             return this;
         }
 
-        public abstract void TryAddModelType<T>(Action<TModelType>? definition = default);
+        public abstract void TryAddModelType<T>(Action<TModelType> definition = default);
     }
 }

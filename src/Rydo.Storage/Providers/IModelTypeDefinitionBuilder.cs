@@ -12,12 +12,12 @@
 
     public abstract class ModelTypeDefinitionBuilder : IModelTypeDefinitionBuilder
     {
-        protected ModelTypeDefinitionBuilder(string? tableName)
+        protected ModelTypeDefinitionBuilder(string tableName)
         {
             TableName = tableName;
         }
 
-        protected string? TableName { get; }
+        protected string TableName { get; }
         
         public abstract IEnumerable<Result> Validate();
 

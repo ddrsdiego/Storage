@@ -6,8 +6,8 @@ namespace Rydo.Storage.Read
 
     public readonly struct ReadResponse
     {
-        private ReadResponse(ReadResponseStatus statusCode, ReadRequest request, byte[]? value,
-            Exception? exception = null)
+        private ReadResponse(ReadResponseStatus statusCode, ReadRequest request, byte[] value,
+            Exception exception = null)
         {
             StatusCode = statusCode;
             Value = value;
@@ -20,9 +20,9 @@ namespace Rydo.Storage.Read
         }
 
         public readonly ReadRequest Request;
-        public readonly byte[]? Value;
+        public readonly byte[] Value;
         public readonly ReadResponseStatus StatusCode;
-        public readonly Exception? Exception;
+        public readonly Exception Exception;
         public readonly DateTime RespondedAt;
         public readonly int ElapsedMilliseconds;
 
@@ -35,7 +35,7 @@ namespace Rydo.Storage.Read
         internal static ReadResponse GetResponseNotFound(ReadRequest request) =>
             new ReadResponse(ReadResponseStatus.NotFound, request, null);
 
-        internal static ReadResponse GetResponseOk(ReadRequest request, byte[]? value) =>
+        internal static ReadResponse GetResponseOk(ReadRequest request, byte[] value) =>
             new ReadResponse(ReadResponseStatus.Ok, request, value);
 
         internal static ReadResponse GetResponseError(ReadRequest request, Exception exception) =>
