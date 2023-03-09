@@ -26,8 +26,8 @@
                     var redisConfiguration = new RedisConfiguration
                     {
                         DbInstance = modelTypeDefinition.DbInstance,
-                        ReadeEndpoint = modelTypeDefinition.ReadEndpoint!,
-                        WriteEndpoint = modelTypeDefinition.WriteEndpoint!
+                        ReadeEndpoint = modelTypeDefinition.ReadEndpoint,
+                        WriteEndpoint = modelTypeDefinition.WriteEndpoint
                     };
 
                     var modelTypeContext =

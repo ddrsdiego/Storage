@@ -84,9 +84,9 @@ namespace Rydo.Storage.Read
                         var counter = 0;
                         var batch = new ReadBatchRequest(batchCapacity);
 
-                        while (counter < batchCapacity && _queue.Reader.TryRead(out var writeRequest))
+                        while (counter < batchCapacity && _queue.Reader.TryRead(out var readRequest))
                         {
-                            batch.TryAdd(writeRequest);
+                            batch.TryAdd(readRequest);
                             counter++;
                             
                             Internals.Metrics.Gauges.ReadRequestInQueue.Dec();

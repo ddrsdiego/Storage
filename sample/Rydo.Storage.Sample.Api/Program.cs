@@ -19,7 +19,7 @@
                 .ConfigureServices((context, services) =>
                 {
                     services.AddControllers();
-                    services.AddDynamoDbStorage();
+                    services.AddRedisStorage();
                     services.AddSingleton<ICustomerRepository, CustomerRepository>();
                     services.AddSwaggerGen(c =>
                         c.SwaggerDoc("v1", new OpenApiInfo {Title = Assembly.GetEntryAssembly()?.GetName().Name}));

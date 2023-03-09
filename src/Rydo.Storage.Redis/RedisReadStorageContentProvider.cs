@@ -16,12 +16,14 @@
 
     internal sealed class RedisReadStorageContentProvider : IRedisReadStorageContentProvider
     {
+        private readonly ILogger<RedisReadStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
-        private IRedisStorageServiceService? _redisServiceCache;
+        private IRedisStorageServiceService _redisServiceCache;
 
         public RedisReadStorageContentProvider(ILogger<RedisReadStorageContentProvider> logger,
             IModelTypeContextContainer modelTypeContextContainer)
         {
+            _logger = logger;
             _modelTypeContextContainer = modelTypeContextContainer;
         }
 
@@ -55,7 +57,7 @@
             if (!redisValue.HasValue || redisValue.IsNullOrEmpty)
                 return ReadResponse.GetResponseNotFound(readRequest);
 
-            return ReadResponse.GetResponseOk(readRequest, (byte[]) redisValue.Box()!);
+            return ReadResponse.GetResponseOk(readRequest, (byte[]) redisValue.Box());
         }
 
         private IDictionary<ReadRequest, Task<RedisValue>> InitReadTasks(ReadBatchRequest batch, string modelTypeName)
@@ -66,7 +68,8 @@
                 var storageItemKey = readRequest.ToStorageItemKey();
                 var query = (RedisValue) storageItemKey.Value;
 
-                readTasks.Add(readRequest, _redisServiceCache!.Reader.HashGetAsync(modelTypeName, query));
+                var task = _redisServiceCache.Reader.HashGetAsync(modelTypeName, query);
+                readTasks.Add(readRequest, task);
             }
 
             return readTasks;
