@@ -9,11 +9,6 @@
     using StackExchange.Redis;
     using Storage.Extensions;
 
-    // internal interface IRedisWriteStorageContentProvider
-    // {
-    //     Task Upsert(IWriteBatchRequest writeBatchRequest);
-    // }
-
     internal sealed class RedisWriteStorageContentProvider : IDbWriteStorageContentProvider
     {
         private const int DelayInMilliseconds = 1;
@@ -54,7 +49,7 @@
                 }
             }
 
-            await Task.Delay(TimeSpan.FromMilliseconds(DelayInMilliseconds));
+            await Task.Delay(TimeSpan.FromMilliseconds(DelayInMilliseconds), cancellationToken);
         }
 
         private void InitWriteTasks(IWriteBatchRequest writeBatchRequest, string? hashKey,
@@ -67,10 +62,10 @@
                 var key = (RedisValue) storageItem.Key.Value;
                 var payload = (RedisValue) storageItem.Payload;
 
-                var writeTask = _redisServiceCache!.Writer.HashSetAsync(hashKey, key, payload, When.Always,
+                var writeTask = _redisServiceCache?.Writer.HashSetAsync(hashKey, key, payload, When.Always,
                     CommandFlags.FireAndForget);
 
-                writeTasks.Add(writeRequest, writeTask);
+                if (writeTask != null) writeTasks.Add(writeRequest, writeTask);
             }
         }
     }

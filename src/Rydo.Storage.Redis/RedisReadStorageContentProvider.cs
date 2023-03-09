@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
@@ -9,16 +10,12 @@
     using StackExchange.Redis;
     using Storage.Extensions;
 
-    // internal interface IRedisReadStorageContentProvider
-    // {
-    //     Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default);
-    // }
-
+    [SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]
     internal sealed class RedisReadStorageContentProvider : IDbReadStorageContentProvider
     {
         private readonly ILogger<RedisReadStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
-        private IRedisStorageServiceService _redisServiceCache;
+        private IRedisStorageServiceService? _redisServiceCache;
 
         public RedisReadStorageContentProvider(ILogger<RedisReadStorageContentProvider> logger,
             IModelTypeContextContainer modelTypeContextContainer)
@@ -57,7 +54,7 @@
             if (!redisValue.HasValue || redisValue.IsNullOrEmpty)
                 return ReadResponse.GetResponseNotFound(readRequest);
 
-            return ReadResponse.GetResponseOk(readRequest, (byte[]) redisValue.Box());
+            return ReadResponse.GetResponseOk(readRequest, (byte[]) redisValue.Box()!);
         }
 
         private IDictionary<ReadRequest, Task<RedisValue>> InitReadTasks(ReadBatchRequest batch, string modelTypeName)
@@ -68,8 +65,8 @@
                 var storageItemKey = readRequest.ToStorageItemKey();
                 var query = (RedisValue) storageItemKey.Value;
 
-                var task = _redisServiceCache.Reader.HashGetAsync(modelTypeName, query);
-                readTasks.Add(readRequest, task);
+                var task = _redisServiceCache?.Reader.HashGetAsync(modelTypeName, query);
+                if (task != null) readTasks.Add(readRequest, task);
             }
 
             return readTasks;
