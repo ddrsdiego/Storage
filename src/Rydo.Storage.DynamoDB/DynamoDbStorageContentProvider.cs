@@ -11,12 +11,12 @@
 
     public sealed class DynamoDbStorageContentProvider : StorageContentProvider
     {
-        private readonly IDynamoDbReadStorageContentProvider _dbReadStorageContentProvider;
-        private readonly IDynamoDbWriteStorageContentProvider _dbWriteStorageContentProvider;
+        private readonly IDbReadStorageContentProvider _dbReadStorageContentProvider;
+        private readonly IDbWriteStorageContentProvider _dbWriteStorageContentProvider;
 
         public DynamoDbStorageContentProvider(ILoggerFactory logger,
-            IDynamoDbWriteStorageContentProvider dbWriteStorageContentProvider,
-            IDynamoDbReadStorageContentProvider dbReadStorageContentProvider)
+            IDbWriteStorageContentProvider dbWriteStorageContentProvider,
+            IDbReadStorageContentProvider dbReadStorageContentProvider)
             : base(logger.CreateLogger<DynamoDbStorageContentProvider>())
         {
             _dbReadStorageContentProvider = dbReadStorageContentProvider;

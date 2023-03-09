@@ -11,13 +11,13 @@
     using Rydo.Storage.Extensions;
     using Rydo.Storage.Write;
     using WriteRequest = Storage.Write.WriteRequest;
+    //
+    // public interface IDynamoDbWriteStorageContentProvider
+    // {
+    //     Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default);
+    // }
 
-    public interface IDynamoDbWriteStorageContentProvider
-    {
-        Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default);
-    }
-
-    internal sealed class DynamoDbWriteStorageContentProvider : IDynamoDbWriteStorageContentProvider
+    internal sealed class DynamoDbWriteStorageContentProvider : IDbWriteStorageContentProvider
     {
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
         private IDynamoDbStorageService _storageService;

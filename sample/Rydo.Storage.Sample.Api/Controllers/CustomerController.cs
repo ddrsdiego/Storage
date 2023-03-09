@@ -1,6 +1,7 @@
 ﻿namespace Rydo.Storage.Sample.Api.Controllers
 {
     using System.Diagnostics;
+    using System.Text;
     using Core.Domain.CustomerAggregate;
     using Core.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,10 @@
         }
 
         [HttpGet("{accountNumber}")]
-        public ValueTask GetByAccountNumber(string accountNumber)
+        public async ValueTask GetByAccountNumber(string accountNumber)
         {
-            var response = _storageClient.Reader.Read<Customer>(accountNumber);
-            return response.WriteResponseAsync(Response);
+            var response = await _storageClient.Reader.Read<Customer>(accountNumber);
+            response.Value.WriteToPipe(Response.BodyWriter);
         }
 
         [HttpGet("async/{accountNumber}")]
@@ -45,8 +46,8 @@
         public async Task<IActionResult> GetByAmount(int amount)
         {
             var customers = GetCustomers(amount);
-            var sw = Stopwatch.StartNew();
 
+            var sw = Stopwatch.StartNew();
             var tasks = new List<ValueTask<ReadResponse>>(customers.Count);
             foreach (var customer in customers)
             {
@@ -57,11 +58,11 @@
             foreach (var task in tasks)
             {
                 var response = await task;
-                var value = response.Value;
+                // _logger.LogInformation("ElapsedMilliseconds: {ResponseElapsedMilliseconds}", response.ElapsedMilliseconds);
             }
-            
+
             sw.Stop();
-            _logger.LogInformation($"ElapsedMilliseconds: {sw.ElapsedMilliseconds}");
+            _logger.LogInformation("ElapsedMilliseconds: {SwElapsedMilliseconds}", sw.ElapsedMilliseconds);
 
             return Ok(customers.LastOrDefault());
         }
@@ -94,7 +95,7 @@
                 AccountNumber = accountNumber,
                 Balance = (decimal) random.NextDouble()
             };
-            
+
             await _storageClient.Write.Upsert<CustomerPosition>(customerPosition.AccountNumber, customerPosition);
             return Created("", customerPosition);
         }

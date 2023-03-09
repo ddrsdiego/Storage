@@ -18,4 +18,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("0358A30E-CFCF-485E-978E-B4699282FA95")]
 [assembly:InternalsVisibleTo("Rydo.Storage.Redis")]
 [assembly:InternalsVisibleTo("Rydo.Storage.DynamoDB")]
+[assembly:InternalsVisibleTo("Rydo.Storage.Postgres")]
 [assembly:InternalsVisibleTo("Rydo.Storage.UnitTest")]

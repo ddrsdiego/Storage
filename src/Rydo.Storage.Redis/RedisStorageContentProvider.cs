@@ -9,12 +9,12 @@
 
     internal sealed class RedisStorageContentProvider : StorageContentProvider
     {
-        private readonly IRedisReadStorageContentProvider _readStorageContentProvider;
-        private readonly IRedisWriteStorageContentProvider _writeStorageContentProvider;
+        private readonly IDbReadStorageContentProvider _readStorageContentProvider;
+        private readonly IDbWriteStorageContentProvider _writeStorageContentProvider;
 
         public RedisStorageContentProvider(ILoggerFactory logger,
-            IRedisWriteStorageContentProvider writeStorageContentProvider,
-            IRedisReadStorageContentProvider readStorageContentProvider)
+            IDbWriteStorageContentProvider writeStorageContentProvider,
+            IDbReadStorageContentProvider readStorageContentProvider)
             : base(logger.CreateLogger<RedisStorageContentProvider>())
         {
             _writeStorageContentProvider = writeStorageContentProvider;
@@ -28,7 +28,7 @@
 
         public override Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default)
         {
-            return _writeStorageContentProvider.Upsert(writeBatchRequest);
+            return _writeStorageContentProvider.Write(writeBatchRequest, cancellationToken);
         }
     }
 }

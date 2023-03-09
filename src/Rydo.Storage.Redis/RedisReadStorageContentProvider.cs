@@ -9,12 +9,12 @@
     using StackExchange.Redis;
     using Storage.Extensions;
 
-    internal interface IRedisReadStorageContentProvider
-    {
-        Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default);
-    }
+    // internal interface IRedisReadStorageContentProvider
+    // {
+    //     Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default);
+    // }
 
-    internal sealed class RedisReadStorageContentProvider : IRedisReadStorageContentProvider
+    internal sealed class RedisReadStorageContentProvider : IDbReadStorageContentProvider
     {
         private readonly ILogger<RedisReadStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;

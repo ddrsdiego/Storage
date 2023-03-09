@@ -11,13 +11,12 @@
     using Microsoft.Extensions.Logging;
     using Rydo.Storage.Extensions;
     using Rydo.Storage.Read;
+    //
+    // public interface IDynamoDbReadStorageContentProvider : IDbReadStorageContentProvider
+    // {
+    // }
 
-    public interface IDynamoDbReadStorageContentProvider
-    {
-        Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default);
-    }
-
-    internal sealed class DynamoDbReadStorageContentProvider : IDynamoDbReadStorageContentProvider
+    internal sealed class DynamoDbReadStorageContentProvider : IDbReadStorageContentProvider
     {
         private const int TimeLimitDefault = 100;
         private readonly ILogger<DynamoDbReadStorageContentProvider> _logger;

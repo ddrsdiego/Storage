@@ -9,6 +9,8 @@
     using Providers;
     using Read;
     using Rydo.Storage.Extensions;
+    using Storage.Read;
+    using Storage.Write;
     using Write;
 
     public static class DynamoDbStorageConfigurator
@@ -53,12 +55,9 @@
             });
 
             configurator.Services.AddSingleton<IStorageConfiguratorBuilder>(builder);
-            configurator.Services
-                .AddSingleton<IStorageConfiguratorBuilder<DynamoDbModelTypeDefinitionBuilder>>(builder);
-            configurator.Services
-                .AddSingleton<IDynamoDbReadStorageContentProvider, DynamoDbReadStorageContentProvider>();
-            configurator.Services
-                .AddSingleton<IDynamoDbWriteStorageContentProvider, DynamoDbWriteStorageContentProvider>();
+            configurator.Services.AddSingleton<IStorageConfiguratorBuilder<DynamoDbModelTypeDefinitionBuilder>>(builder);
+            configurator.Services.AddSingleton<IDbReadStorageContentProvider, DynamoDbReadStorageContentProvider>();
+            configurator.Services.AddSingleton<IDbWriteStorageContentProvider, DynamoDbWriteStorageContentProvider>();
         }
     }
 }

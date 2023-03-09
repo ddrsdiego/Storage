@@ -2,18 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using Write;
     using StackExchange.Redis;
     using Storage.Extensions;
 
-    internal interface IRedisWriteStorageContentProvider
-    {
-        Task Upsert(IWriteBatchRequest writeBatchRequest);
-    }
+    // internal interface IRedisWriteStorageContentProvider
+    // {
+    //     Task Upsert(IWriteBatchRequest writeBatchRequest);
+    // }
 
-    internal sealed class RedisWriteStorageContentProvider : IRedisWriteStorageContentProvider
+    internal sealed class RedisWriteStorageContentProvider : IDbWriteStorageContentProvider
     {
         private const int DelayInMilliseconds = 1;
         private IRedisStorageServiceService? _redisServiceCache;
@@ -27,7 +28,7 @@
             _modelTypeContextContainer = modelTypeContextContainer;
         }
 
-        public async Task Upsert(IWriteBatchRequest writeBatchRequest)
+        public async Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default)
         {
             if (!_modelTypeContextContainer.TryGetModel(writeBatchRequest.ModeTypeName!, out var modelTypeContext))
                 throw new InvalidOperationException("topicDefinition.TopicName");

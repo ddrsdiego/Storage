@@ -4,8 +4,10 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Providers;
+    using Read;
     using Rydo.Storage.Extensions;
     using Redis;
+    using Write;
 
     public static class RedisStorageConfigurator
     {
@@ -42,8 +44,8 @@
             configurator.Services.AddSingleton<IStorageConfiguratorBuilder>(builder);
             configurator.Services.AddSingleton<IStorageConfiguratorBuilder<RedisModelTypeDefinitionBuilder>>(builder);
             configurator.Services.AddSingleton<IStorageContentProvider, RedisStorageContentProvider>();
-            configurator.Services.AddSingleton<IRedisReadStorageContentProvider, RedisReadStorageContentProvider>();
-            configurator.Services.AddSingleton<IRedisWriteStorageContentProvider, RedisWriteStorageContentProvider>();
+            configurator.Services.AddSingleton<IDbReadStorageContentProvider, RedisReadStorageContentProvider>();
+            configurator.Services.AddSingleton<IDbWriteStorageContentProvider, RedisWriteStorageContentProvider>();
         }
     }
 }
