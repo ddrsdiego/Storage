@@ -2,6 +2,7 @@
 {
     using System;
     using System.Runtime.CompilerServices;
+    using Helpers;
     using Providers;
 
     public readonly struct ReadRequest
@@ -14,12 +15,15 @@
         internal ReadRequest(string key, string sortKey, IModelTypeDefinition definition, FutureReadResponse response)
         {
             Key = key ?? throw new ArgumentNullException(nameof(key));
+            
+            OperationId = GeneratorOperationId.Generate();
             Response = response;
             Definition = definition;
             SortKey = sortKey;
             RequestAt = DateTime.Now;
         }
 
+        public readonly string OperationId;
         public readonly string Key;
         public readonly string SortKey;
         public readonly IModelTypeDefinition Definition;

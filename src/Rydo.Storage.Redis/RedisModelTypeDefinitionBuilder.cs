@@ -14,7 +14,6 @@
         private int _writeBufferSize;
         private int _readBufferSize;
         private TimeSpan _timeToLive;
-        private bool _useMemoryCache;
 
 
         public RedisModelTypeDefinitionBuilder(Type type, string? tableName)
@@ -56,19 +55,11 @@
             return this;
         }
 
-        public RedisModelTypeDefinitionBuilder DbInstance(string dbInstance)
+        public RedisModelTypeDefinitionBuilder DbInstance(string dbInstance = "0")
         {
             _dbInstance = dbInstance;
             return this;
         }
-
-        public IModelTypeDefinitionBuilder UseMemoryCache()
-        {
-            UseMemoryCache(true);
-            return this;
-        }
-
-        private void UseMemoryCache(bool useMemoryCache) => _useMemoryCache = useMemoryCache;
 
         public override IEnumerable<Result> Validate()
         {
@@ -85,7 +76,7 @@
             {
                 TableName = TableName,
                 TimeToLive = _timeToLive,
-                UseMemoryCache = _useMemoryCache,
+                UseMemoryCache = MemoryCache,
                 WriteBufferSize = _writeBufferSize,
                 ReadBufferSize = _readBufferSize,
                 DbInstance = _dbInstance,

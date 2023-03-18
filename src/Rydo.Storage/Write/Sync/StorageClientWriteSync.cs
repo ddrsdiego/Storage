@@ -1,12 +1,12 @@
 namespace Rydo.Storage.Write.Sync
 {
     using System;
-    using System.Text.Json;
     using System.Threading.Tasks;
     using Attributes;
     using Extensions;
     using Microsoft.Extensions.Logging;
     using Providers;
+    using Serialization;
 
     internal sealed class StorageClientWriteSync : IStorageClientWriteSync
     {
@@ -14,15 +14,19 @@ namespace Rydo.Storage.Write.Sync
         private readonly IStorageWriterConsumer _storageWriterConsumer;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
         private readonly ITableStorageManager _tableStorageManager;
+        private readonly IRydoStorageCacheSerializer _serializer;
 
         public StorageClientWriteSync(ILogger<StorageClientWriteSync> logger,
-            IStorageWriterConsumer storageWriterConsumer, IModelTypeContextContainer modelTypeContextContainer,
-            ITableStorageManager tableStorageManager)
+            IStorageWriterConsumer storageWriterConsumer,
+            IModelTypeContextContainer modelTypeContextContainer,
+            ITableStorageManager tableStorageManager,
+            IRydoStorageCacheSerializer serializer)
         {
             _logger = logger;
             _storageWriterConsumer = storageWriterConsumer;
             _modelTypeContextContainer = modelTypeContextContainer;
             _tableStorageManager = tableStorageManager;
+            _serializer = serializer;
         }
 
         public ValueTask<WriteResponse> Upsert<T>(string key, T payload) => Upsert(key, string.Empty, payload);
@@ -31,14 +35,14 @@ namespace Rydo.Storage.Write.Sync
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (payload == null) throw new ArgumentNullException(nameof(payload));
-
+            
             var modelName = ModelTypeDefinitionHelper.SanitizeModeTypeName(payload.GetType());
 
             if (!_modelTypeContextContainer.TryGetModel(modelName, out var modelTypeContext))
                 throw new Exception();
 
             var future = FutureWriteResponse.GetInstance();
-            var payloadAsUtf8 = JsonSerializer.SerializeToUtf8Bytes(payload);
+            var payloadAsUtf8 = await _serializer.SerializeAsync(payload);
 
             var writeRequest = WriteRequest
                 .Builder(WriteRequestOperation.Upsert, future)

@@ -20,7 +20,11 @@
                     dynamoDb.SetReadBufferSize(100);
                     dynamoDb.SetWriteBufferSize(100);
 
-                    dynamoDb.TryAddModelType<Customer>(definition => definition.TimeToLive(ttl));
+                    dynamoDb.TryAddModelType<Customer>(definition =>
+                    {
+                        definition.TimeToLive(ttl);
+                        definition.UseMemoryCache();
+                    });
                     dynamoDb.TryAddModelType<CustomerPosition>(definition => definition.TimeToLive(ttl));
                     dynamoDb.TryAddModelType<CustomerPositionConsolidated>(definition => definition.TimeToLive(ttl));
                 });

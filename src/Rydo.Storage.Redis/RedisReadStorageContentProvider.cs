@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
@@ -15,7 +17,7 @@
     {
         private readonly ILogger<RedisReadStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
-        private IRedisStorageServiceService? _redisServiceCache;
+        private IRedisStorageService? _redisServiceCache;
 
         public RedisReadStorageContentProvider(ILogger<RedisReadStorageContentProvider> logger,
             IModelTypeContextContainer modelTypeContextContainer)
@@ -29,9 +31,15 @@
             if (!_modelTypeContextContainer.TryGetModel(batch.ModeTypeName!, out var modelTypeContext))
                 throw new InvalidOperationException("topicDefinition.TopicName");
 
-            _redisServiceCache = (IRedisStorageServiceService) modelTypeContext.StorageService;
+            _redisServiceCache = (IRedisStorageService) modelTypeContext.StorageService;
 
-            var readTasks = InitReadTasks(batch, batch.ModeTypeName!);
+            var sw = Stopwatch.StartNew();
+            _logger.LogInformation("[{BatchId}] - Starting query for {BatchCount} item(s) on {TableName} table", 
+                batch.BatchId,
+                batch.Count,
+                batch.TableName);
+
+            var readTasks = InitReadTasks(batch, batch.TableName);
             foreach (var (request, task) in readTasks)
             {
                 try
@@ -47,6 +55,14 @@
                     _ = request.Response.TrySetResult(ReadResponse.GetResponseError(request, e));
                 }
             }
+
+            _logger.LogInformation("[{BatchId}] - Finishing query for {BatchCount} item(s) on {TableName} table, Elapsed Time: {ElapsedMilliseconds}", 
+                batch.BatchId,
+                batch.Count,
+                batch.TableName,
+                sw.ElapsedMilliseconds);
+            
+            await Task.Delay(TimeSpan.FromMilliseconds(1), cancellationToken);
         }
 
         private static ReadResponse CreateReadResponse(RedisValue redisValue, ReadRequest readRequest)
@@ -57,16 +73,18 @@
             return ReadResponse.GetResponseOk(readRequest, (byte[]) redisValue.Box()!);
         }
 
-        private IDictionary<ReadRequest, Task<RedisValue>> InitReadTasks(ReadBatchRequest batch, string modelTypeName)
+        private IDictionary<ReadRequest, Task<RedisValue>> InitReadTasks(IReadBatchRequest batch, string modelTypeName)
         {
             var readTasks = new Dictionary<ReadRequest, Task<RedisValue>>(batch.Count);
-            foreach (var readRequest in batch)
+            var requests = batch.ToArray();
+
+            for (var index = 0; index < requests.Length; index++)
             {
-                var storageItemKey = readRequest.ToStorageItemKey();
+                var storageItemKey = requests[index].ToStorageItemKey();
                 var query = (RedisValue) storageItemKey.Value;
 
                 var task = _redisServiceCache?.Reader.HashGetAsync(modelTypeName, query);
-                if (task != null) readTasks.Add(readRequest, task);
+                if (task != null) readTasks.Add(requests[index], task);
             }
 
             return readTasks;

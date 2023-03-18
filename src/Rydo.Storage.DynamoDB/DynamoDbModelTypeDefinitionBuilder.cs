@@ -13,7 +13,6 @@
         private int _writeBufferSize;
         private int _readBufferSize;
         private TimeSpan _timeToLive;
-        private bool _useMemoryCache;
 
         public DynamoDbModelTypeDefinitionBuilder(Type type, string tableName)
             : base(tableName)
@@ -53,18 +52,6 @@
             return this;
         }
 
-        public DynamoDbModelTypeDefinitionBuilder UseMemoryCache()
-        {
-            UseMemoryCache(true);
-            return this;
-        }
-
-        internal DynamoDbModelTypeDefinitionBuilder UseMemoryCache(bool useMemoryCache)
-        {
-            _useMemoryCache = useMemoryCache;
-            return this;
-        }
-
         public override IEnumerable<Result> Validate()
         {
             if (string.IsNullOrEmpty(_accessKey))
@@ -80,7 +67,7 @@
             {
                 TableName = TableName,
                 TimeToLive = _timeToLive,
-                UseMemoryCache = _useMemoryCache,
+                UseMemoryCache = MemoryCache,
                 WriteBufferSize = _writeBufferSize,
                 ReadBufferSize = _readBufferSize,
                 AccessKey = _accessKey,

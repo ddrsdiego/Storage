@@ -34,13 +34,13 @@ namespace Rydo.Storage.Providers
             return this;
         }
 
-        public IStorageConfiguratorBuilder<TModelType> SetWriteBufferSize(int writeBufferSize)
+        public IStorageConfiguratorBuilder<TModelType> SetWriteBufferSize(int writeBufferSize = 100)
         {
             GetWriteBufferSize = writeBufferSize;
             return this;
         }
 
-        public IStorageConfiguratorBuilder<TModelType> SetReadBufferSize(int readBufferSize)
+        public IStorageConfiguratorBuilder<TModelType> SetReadBufferSize(int readBufferSize = 100)
         {
             GetReadBufferSize = readBufferSize;
             return this;

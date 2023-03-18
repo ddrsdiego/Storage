@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Ardalis.ApiEndpoints" Version="4.0.1" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
@@ -15,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Rydo.Storage.DynamoDB\Rydo.Storage.DynamoDB.csproj" />
       <ProjectReference Include="..\..\src\Rydo.Storage.MongoDb\Rydo.Storage.MongoDb.csproj" />
+      <ProjectReference Include="..\..\src\Rydo.Storage.Postgres\Rydo.Storage.Postgres.csproj" />
       <ProjectReference Include="..\..\src\Rydo.Storage.Redis\Rydo.Storage.Redis.csproj" />
       <ProjectReference Include="..\..\src\Rydo.Storage\Rydo.Storage.csproj" />
       <ProjectReference Include="..\Rydo.Storage.Sample.Core\Rydo.Storage.Sample.Core.csproj" />

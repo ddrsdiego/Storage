@@ -1,6 +1,5 @@
 ﻿namespace Rydo.Storage.Memory
 {
-    using System;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Logging;
@@ -8,6 +7,9 @@
 
     public interface IStorageMemory
     {
+        public IStorageMemoryRead Reader { get; }
+        public IStorageMemoryWrite Writer { get; }
+
         ValueTask Upsert(IWriteBatchRequest writeBatchRequest);
     }
 
@@ -16,29 +18,20 @@
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger<StorageMemory> _logger;
 
-        public StorageMemory(ILogger<StorageMemory> logger, IMemoryCache memoryCache)
+        public StorageMemory(ILogger<StorageMemory> logger,
+            IMemoryCache memoryCache,
+            IStorageMemoryWrite storageMemoryWrite,
+            IStorageMemoryRead storageMemoryRead)
         {
+            Writer = storageMemoryWrite;
+            Reader = storageMemoryRead;
             _logger = logger;
             _memoryCache = memoryCache;
         }
 
-        public ValueTask Upsert(IWriteBatchRequest writeBatchRequest)
-        {
-            try
-            {
-                foreach (var writeRequest in writeBatchRequest)
-                {
-                    var storageItem = writeRequest.ToStorageItem();
+        public IStorageMemoryRead Reader { get; }
+        public IStorageMemoryWrite Writer { get; }
 
-                    _memoryCache.Set(storageItem.Key.Value, storageItem.Payload, writeRequest.ModelTypeDefinition!.TimeToLive);
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "");
-            }
-
-            return new ValueTask(Task.CompletedTask);
-        }
+        public ValueTask Upsert(IWriteBatchRequest writeBatchRequest) => Writer.Upsert(writeBatchRequest);
     }
 }

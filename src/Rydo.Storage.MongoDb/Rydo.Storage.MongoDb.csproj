@@ -6,10 +6,10 @@
 
     <ItemGroup>
       <Folder Include="Read" />
-      <Folder Include="Write" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Rydo.Storage.DynamoDB\Rydo.Storage.DynamoDB.csproj" />
       <ProjectReference Include="..\Rydo.Storage\Rydo.Storage.csproj" />
     </ItemGroup>
 

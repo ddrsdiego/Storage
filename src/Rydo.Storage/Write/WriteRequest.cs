@@ -2,7 +2,10 @@
 {
     using System;
     using System.Buffers;
+    using System.IO;
     using System.Text.Json;
+    using System.Threading.Tasks;
+    using Helpers;
     using Providers;
 
     public readonly struct WriteRequest
@@ -15,14 +18,16 @@
 
             if (operation == WriteRequestOperation.Upsert && payload == null)
                 throw new ArgumentNullException(nameof(payload));
-
+            
+            OperationId = GeneratorOperationId.Generate();
             Payload = payload;
             SortKey = sortKey;
             Response = response;
             Operation = operation;
             RequestedAt = DateTime.Now;
         }
-        
+
+        public readonly string OperationId;
         public readonly string Key;
         public readonly string SortKey;
         public readonly byte[] Payload;
@@ -36,6 +41,12 @@
         {
             var reader = new Utf8JsonReader(new ReadOnlySequence<byte>(Payload));
             return JsonSerializer.Deserialize<T>(ref reader)!;
+        }
+
+        public async ValueTask<T> GetRawAsync<T>()
+        {
+            using var stream = new MemoryStream(Payload);
+            return await JsonSerializer.DeserializeAsync<T>(stream);
         }
 
         internal static WriteRequestBuilder Builder(WriteRequestOperation operation,

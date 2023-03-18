@@ -3,8 +3,12 @@
     using System;
     using Attributes;
     using Memory;
+    using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Microsoft.Extensions.Logging;
     using Read;
+    using Serialization;
     using Write;
     using Write.Async;
     using Write.Sync;
@@ -18,14 +22,27 @@
             configurator(storageContainerConfiguratorBuilder);
 
             services.AddMemoryCache();
+            
+            services.AddSingleton<IStorageMemoryRead, StorageMemoryRead>();
+            services.AddSingleton<IStorageMemoryWrite, StorageMemoryWrite>();
+            
+            services.AddSingleton<IStorageMemory>(sp =>
+            {
+                var logger = sp.GetService<ILogger<StorageMemory>>();
+                
+                var memoryCache = sp.GetService<MemoryCache>();
+                var memoryRead = sp.GetService<IStorageMemoryRead>();
+                var memoryWrite = sp.GetService<IStorageMemoryWrite>();
+                return new StorageMemory(logger, memoryCache, memoryWrite, memoryRead);
+            });
 
-            services.AddSingleton<IStorageMemory, StorageMemory>();
             services.AddSingleton<IStorageClient, StorageClient>();
             services.AddSingleton<ITableStorageManager, TableStorageManager>();
-            
+            services.TryAddSingleton<IRydoStorageCacheSerializer>(_ => new RydoStorageCacheSystemTextJsonSerializer());
+
             services.AddReadServices();
             services.AddWriteServices();
-            
+
             return services;
         }
 

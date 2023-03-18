@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Rydo.Storage.Redis\Rydo.Storage.Redis.csproj" />
       <ProjectReference Include="..\Rydo.Storage\Rydo.Storage.csproj" />
     </ItemGroup>
 

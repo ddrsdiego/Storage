@@ -21,7 +21,7 @@ namespace Rydo.Storage.Providers
             ModelType = modelType;
             ModeTypeName = SanitizeModeTypeName(modelType);
         }
-
+        
         private static string SanitizeModeTypeName(Type modelType) =>
             ModelTypeDefinitionHelper.SanitizeModeTypeName(modelType);
 

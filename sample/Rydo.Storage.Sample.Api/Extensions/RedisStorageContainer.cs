@@ -12,12 +12,12 @@
             {
                 configurator.UseRedis(redis =>
                 {
-                    redis.SetReadBufferSize(100);
-                    redis.SetWriteBufferSize(100);
+                    redis.SetReadBufferSize(1_000);
+                    redis.SetWriteBufferSize(1_000);
                     
                     redis.SetReadEndpoint("localhost:6379");
                     redis.SetWriteEndpoint("localhost:6379");
-                    
+
                     redis.TryAddModelType<CustomerPositionConsolidated>(definition =>
                     {
                         definition.DbInstance("1");

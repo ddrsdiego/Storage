@@ -28,7 +28,7 @@
 
         public Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default)
         {
-            _modelTypeContextContainer.TryGetModel(writeBatchRequest.ModeTypeName!, out var modelTypeDefinition);
+            _modelTypeContextContainer.TryGetModel(writeBatchRequest.ModeTypeName, out var modelTypeDefinition);
 
             if (modelTypeDefinition.Definition.UseMemoryCache)
             {

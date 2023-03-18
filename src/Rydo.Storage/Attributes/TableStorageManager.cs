@@ -35,10 +35,10 @@
             
             lock (_lockObject)
             {
-                if (_cache.TryGetValue(modeFullName!, out tableName))
+                if (_cache.TryGetValue(modeFullName, out tableName))
                     return true;
 
-                _cache = _cache.Add(modeFullName!, tableNameFromModel);
+                _cache = _cache.Add(modeFullName, tableNameFromModel);
                 tableName = tableNameFromModel;
             }
 

@@ -1,11 +1,11 @@
 namespace Rydo.Storage.Read
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
+    using Helpers;
 
     public interface IReadBatchRequest : IBatchRequest, IEnumerable<ReadRequest>
     {
@@ -22,8 +22,7 @@ namespace Rydo.Storage.Read
         {
             _syncLoc = new object();
             _readRequests = new Dictionary<long, ReadRequest>(capacity);
-
-            BatchId = Guid.NewGuid().ToString().Split('-')[0];
+            BatchId = $"BATCH-ID-{GeneratorOperationId.Generate()}";
         }
 
         private string _modeTypeName = string.Empty;
@@ -38,6 +37,17 @@ namespace Rydo.Storage.Read
             }
         }
 
+        private string _tableName = string.Empty;
+        public string TableName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_tableName))
+                    _tableName = _readRequests.First().Value.Definition?.TableName;
+                return _tableName;
+            }
+        }
+        
         public bool TryAdd(ReadRequest readRequest) => InternalTryAdd(readRequest);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

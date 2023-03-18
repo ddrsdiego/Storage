@@ -9,67 +9,87 @@
 
     internal static class ReadExtensions
     {
-        public static async ValueTask WriteResponseAsync(this ValueTask<ReadResponse> readResponse,
-            HttpResponse response)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="taskReadResponse"></param>
+        /// <param name="response"></param>
+        /// <param name="cancellationToken"></param>
+        public static async Task WriteResponseAsync(this ValueTask<ReadResponse> taskReadResponse,
+            HttpResponse response, CancellationToken cancellationToken = default)
         {
-            var readResult = await readResponse;
+            var readResponse = await taskReadResponse;
+            await readResponse.WriteResponseAsync(response, cancellationToken);
+        }
 
-            response.StatusCode = (int) readResult.StatusCode;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="taskReadResponse"></param>
+        /// <param name="response"></param>
+        /// <param name="cancellationToken"></param>
+        public static async Task WriteResponseAsync(this Task<ReadResponse> taskReadResponse, HttpResponse response,
+            CancellationToken cancellationToken = default)
+        {
+            var readResponse = await taskReadResponse;
+            await readResponse.WriteResponseAsync(response, cancellationToken);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="readResponse"></param>
+        /// <param name="response"></param>
+        /// <param name="cancellationToken"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task WriteResponseAsync(this ReadResponse readResponse, HttpResponse response,
+            CancellationToken cancellationToken = default)
+        {
+            response.StatusCode = (int) readResponse.StatusCode;
             response.ContentType = MediaTypeNames.Application.Json;
 
-            await response.StartAsync();
+            await response.StartAsync(cancellationToken);
 
-            if (readResult.StatusCode == ReadResponseStatus.Ok)
-            {
-                response.BodyWriter.WriteToPipe(readResult.Value, Encoding.UTF8.GetEncoder());
-                // await response.BodyWriter.WriteAsync(readResult.Value);
-            }
+            if (readResponse.StatusCode == ReadResponseStatus.Ok)
+                response.BodyWriter.WriteToPipe(readResponse.Value);
             else
                 await response.BodyWriter.WriteAsync(
-                    new ReadOnlyMemory<byte>(JsonSerializer.SerializeToUtf8Bytes(new { })));
+                    new ReadOnlyMemory<byte>(JsonSerializer.SerializeToUtf8Bytes(new { })), cancellationToken);
 
             await response.BodyWriter.CompleteAsync();
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="pipe"></param>
+        private static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe) =>
+            value.WriteToPipe(pipe, Encoding.UTF8.GetEncoder());
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="pipe"></param>
+        /// <param name="encoder"></param>
+        private static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe, Encoder encoder) =>
+            pipe.WriteToPipe(value, encoder);
 
-        public static async ValueTask WriteResponseAsync(this Task<ReadResponse> readResponse, HttpResponse response)
-        {
-            var readResult = await readResponse;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="value"></param>
+        public static void WriteToPipe(this PipeWriter pipe, IReadOnlyList<byte> value) =>
+            pipe.WriteToPipe(value, Encoding.UTF8.GetEncoder());
 
-            response.StatusCode = (int) readResult.StatusCode;
-            response.ContentType = MediaTypeNames.Application.Json;
-
-            await response.StartAsync();
-
-            if (readResult.StatusCode == ReadResponseStatus.Ok)
-            {
-                response.BodyWriter.WriteToPipe(readResult.Value, Encoding.UTF8.GetEncoder());
-                // await response.BodyWriter.WriteAsync(readResult.Value);
-            }
-            else
-                await response.BodyWriter.WriteAsync(
-                    new ReadOnlyMemory<byte>(JsonSerializer.SerializeToUtf8Bytes(new { })));
-
-            await response.BodyWriter.CompleteAsync();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe) => value.WriteToPipe(pipe, Encoding.UTF8.GetEncoder());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe, Encoder encoder)
-        {
-            Span<char> charSpan = stackalloc char[value.Count];
-            for (var counter = 0; counter < value.Count; counter++)
-            {
-                charSpan[counter] = (char) value[counter];
-            }
-
-            var bytesNeeded = encoder.GetByteCount(charSpan, true);
-            var bytesWritten = encoder.GetBytes(charSpan, pipe.GetSpan(bytesNeeded), true);
-
-            pipe.Advance(bytesWritten);
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="value"></param>
+        /// <param name="encoder"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteToPipe(this PipeWriter pipe, IReadOnlyList<byte> value, Encoder encoder)
         {

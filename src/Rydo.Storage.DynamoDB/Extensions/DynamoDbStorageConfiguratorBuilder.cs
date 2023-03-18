@@ -35,18 +35,17 @@ namespace Rydo.Storage.DynamoDB.Extensions
             ModelExtensions.TryExtractTableName<T>(out var tableName);
             
             var builder = new DynamoDbModelTypeDefinitionBuilder(typeof(T), tableName);
-            definition!.Invoke(builder);
+            definition.Invoke(builder);
             
+            builder.Validate().ThrowIfContainsFailure();
+
             var modelTypeDefinition = builder
                 .ReadBufferSize(GetReadBufferSize)
                 .WriteBufferSize(GetWriteBufferSize)
                 .SetAccessKey(_accessKey)
                 .SetSecretKey(_secretKey)
-                .UseMemoryCache(UseMemoryCache)
                 .Build();
-
-            builder.Validate().ThrowIfContainsFailure();
-
+            
             if (!Entries.TryGetValue(modelTypeDefinition.ModeTypeName, out _))
                 Entries = Entries.Add(modelTypeDefinition.ModeTypeName, modelTypeDefinition);
         }

@@ -35,8 +35,9 @@
             ModelExtensions.TryExtractTableName<T>(out var tableName);
 
             var builder = new RedisModelTypeDefinitionBuilder(typeof(T), tableName);
-            definition!.Invoke(builder);
-
+            
+            definition?.Invoke(builder);
+           
             var modelTypeDefinition = builder
                 .WriteBufferSize(GetWriteBufferSize)
                 .ReadBufferSize(GetReadBufferSize)
@@ -45,7 +46,7 @@
                 .Build();
 
             builder.Validate().ThrowIfContainsFailure();
-
+            
             if (!Entries.TryGetValue(modelTypeDefinition.ModeTypeName, out _))
                 Entries = Entries.Add(modelTypeDefinition.ModeTypeName, modelTypeDefinition);
         }

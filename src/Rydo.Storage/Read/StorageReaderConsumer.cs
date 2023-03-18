@@ -12,7 +12,8 @@ namespace Rydo.Storage.Read
 
     public interface IStorageReaderConsumer
     {
-        ValueTask EnqueueRequest(ReadRequest readRequest);
+        ValueTask EnqueueRequest(ReadRequest readRequest,
+            CancellationToken cancellationToken = default);
     }
 
     internal sealed class StorageReaderConsumer : IStorageReaderConsumer
@@ -24,7 +25,7 @@ namespace Rydo.Storage.Read
         private readonly IStorageConfiguratorBuilder _storageConfiguratorBuilder;
         private readonly Channel<ReadRequest> _queue;
         private readonly CancellationToken _cancellationToken;
-        private readonly TaskCompletionSource<bool> _taskCompletion;
+        private readonly TaskCompletionSource<bool> _consumerTaskRunner;
 
         public StorageReaderConsumer(IStorageRead storageRead, IStorageConfiguratorBuilder storageConfiguratorBuilder,
             IServiceProvider serviceProvider)
@@ -47,13 +48,14 @@ namespace Rydo.Storage.Read
                 .GetRequiredService<IHostApplicationLifetime>()
                 .ApplicationStopping;
             
-            _taskCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _consumerTaskRunner = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         
             _readerTask = Task.Run(ReadFromChannel);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ValueTask EnqueueRequest(ReadRequest readRequest)
+        public ValueTask EnqueueRequest(ReadRequest readRequest,
+            CancellationToken cancellationToken = default)
         {
             var writeTask = _queue.Writer.WriteAsync(readRequest, _cancellationToken);
 
@@ -104,7 +106,7 @@ namespace Rydo.Storage.Read
             }
             finally
             {
-                if (_taskCompletion.TrySetResult(false))
+                if (_consumerTaskRunner.TrySetResult(false))
                 {
                 }
             }

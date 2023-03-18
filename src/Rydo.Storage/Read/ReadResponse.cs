@@ -29,7 +29,7 @@ namespace Rydo.Storage.Read
         public T GetRaw<T>()
         {
             var reader = new Utf8JsonReader(new ReadOnlySequence<byte>(Value));
-            return JsonSerializer.Deserialize<T>(ref reader)!;
+            return JsonSerializer.Deserialize<T>(ref reader);
         }
 
         internal static ReadResponse GetResponseNotFound(ReadRequest request) =>

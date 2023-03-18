@@ -1,6 +1,7 @@
 ﻿namespace Rydo.Storage.Write
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Async;
     using Sync;
@@ -20,12 +21,13 @@
                                         throw new ArgumentNullException(nameof(storageClientWriterAsync));
         }
 
-        public ValueTask<WriteResponse> Upsert<T>(string key, T payload)
+        public ValueTask<WriteResponse> Upsert<T>(string key, T payload, CancellationToken cancellationToken = default)
         {
             return _storageClientWriteSync.Upsert(key, payload);
         }
 
-        public ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload)
+        public ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload,
+            CancellationToken cancellationToken = default)
         {
             return _storageClientWriteSync.Upsert(key, sortKey, payload);
         }

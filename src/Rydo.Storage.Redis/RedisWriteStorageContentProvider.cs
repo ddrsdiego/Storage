@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
@@ -12,7 +13,8 @@
     internal sealed class RedisWriteStorageContentProvider : IDbWriteStorageContentProvider
     {
         private const int DelayInMilliseconds = 1;
-        private IRedisStorageServiceService? _redisServiceCache;
+        
+        private IRedisStorageService? _redisServiceCache;
         private readonly ILogger<RedisWriteStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
 
@@ -25,12 +27,12 @@
 
         public async Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default)
         {
-            if (!_modelTypeContextContainer.TryGetModel(writeBatchRequest.ModeTypeName!, out var modelTypeContext))
+            if (!_modelTypeContextContainer.TryGetModel(writeBatchRequest.ModeTypeName, out var modelTypeContext))
                 throw new InvalidOperationException("topicDefinition.TopicName");
 
-            _redisServiceCache = (IRedisStorageServiceService) modelTypeContext.StorageService;
+            _redisServiceCache = (IRedisStorageService) modelTypeContext.StorageService;
 
-            var hashKey = writeBatchRequest.ModeTypeName;
+            var hashKey = writeBatchRequest.TableName;
             var writeTasks = new Dictionary<WriteRequest, Task<bool>>(writeBatchRequest.Count);
 
             InitWriteTasks(writeBatchRequest, hashKey, writeTasks);
@@ -55,9 +57,11 @@
         private void InitWriteTasks(IWriteBatchRequest writeBatchRequest, string? hashKey,
             IDictionary<WriteRequest, Task<bool>> writeTasks)
         {
-            foreach (var writeRequest in writeBatchRequest)
+            var requests = writeBatchRequest.ToArray();
+            
+            for (var index = 0; index < requests.Length; index++)
             {
-                var storageItem = writeRequest.ToStorageItem();
+                var storageItem = requests[index].ToStorageItem();
 
                 var key = (RedisValue) storageItem.Key.Value;
                 var payload = (RedisValue) storageItem.Payload;
@@ -65,7 +69,7 @@
                 var writeTask = _redisServiceCache?.Writer.HashSetAsync(hashKey, key, payload, When.Always,
                     CommandFlags.FireAndForget);
 
-                if (writeTask != null) writeTasks.Add(writeRequest, writeTask);
+                if (writeTask != null) writeTasks.Add(requests[index], writeTask);
             }
         }
     }

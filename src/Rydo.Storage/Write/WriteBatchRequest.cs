@@ -11,6 +11,8 @@
     {
         string ModeTypeName { get; }
 
+        string TableName { get; }
+        
         IEnumerable<StorageItem> StorageItems { get; }
 
         void TryAdd(WriteRequest writeRequest);
@@ -39,6 +41,17 @@
             }
         }
 
+        private string _tableName = string.Empty;
+        public string TableName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_tableName))
+                    _tableName = _writeRequests.First().Value.ModelTypeDefinition?.TableName!;
+                return _tableName;
+            }
+        }
+
         public string BatchId { get; }
 
         private int _count;
@@ -57,9 +70,9 @@
 
                 var key = writeRequest.ToStorageItem().Key.Value;
 
-                if (_writeRequests!.TryGetValue(key!, out _)) return isNewToken;
+                if (_writeRequests.TryGetValue(key, out _)) return isNewToken;
 
-                _writeRequests![key!] = writeRequest;
+                _writeRequests[key] = writeRequest;
                 Interlocked.Increment(ref _count);
                 
                 isNewToken = true;
@@ -73,7 +86,7 @@
         {
             lock (_sync)
             {
-                foreach (var writeRequest in _writeRequests!)
+                foreach (var writeRequest in _writeRequests)
                 {
                     if (writeRequest.Value.IsValidRequest)
                         yield return writeRequest.Value;

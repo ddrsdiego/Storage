@@ -3,17 +3,17 @@
     using System;
     using StackExchange.Redis;
 
-    internal sealed class RedisStorageServiceService : IRedisStorageServiceService
+    internal sealed class RedisStorageService : IRedisStorageService
     {
         private readonly RedisConfiguration _redisConfiguration;
         private readonly IConnectionMultiplexer _writerMultiplexer;
         private readonly IConnectionMultiplexer _readerMultiplexer;
 
-        public RedisStorageServiceService(RedisConfiguration redisConfiguration)
+        public RedisStorageService(RedisConfiguration redisConfiguration)
         {
             _redisConfiguration = redisConfiguration;
-            _writerMultiplexer = ConnectionMultiplexer.Connect(redisConfiguration.WriteEndpoint!);
-            _readerMultiplexer = ConnectionMultiplexer.Connect(redisConfiguration.ReadeEndpoint!);
+            _writerMultiplexer = ConnectionMultiplexer.Connect(redisConfiguration.WriteEndpoint);
+            _readerMultiplexer = ConnectionMultiplexer.Connect(redisConfiguration.ReadeEndpoint);
         }
 
         private IDatabase? _writer;

@@ -5,20 +5,39 @@
     using Attributes;
     using Storage.Extensions;
 
-    public class PostgresStorageConfiguratorBuilder :
+    public sealed class PostgresStorageConfiguratorBuilder :
         StorageConfiguratorBuilder<PostgresModelTypeDefinitionBuilder>
     {
-        public PostgresStorageConfiguratorBuilder()
+        private string _readEndpoint;
+        private string _writeEndpoint;
+        
+        internal PostgresStorageConfiguratorBuilder()
             : base("postgres-storage")
         {
+            _readEndpoint = string.Empty;
+            _writeEndpoint = string.Empty;
         }
 
+        public PostgresStorageConfiguratorBuilder SetReadEndpoint(string readEndpoint)
+        {
+            _readEndpoint = readEndpoint;
+            return this;
+        }
+
+        public PostgresStorageConfiguratorBuilder SetWriteEndpoint(string writeEndpoint)
+        {
+            _writeEndpoint = writeEndpoint;
+            return this;
+        }
+        
         public override void TryAddModelType<T>(Action<PostgresModelTypeDefinitionBuilder>? definition = default)
         {
             ModelExtensions.TryExtractTableName<T>(out var tableName);
             var builder = new PostgresModelTypeDefinitionBuilder(typeof(T), tableName);
 
             var modelTypeDefinition = builder
+                .ReadEndpoint(_readEndpoint)
+                .WriteEndpoint(_writeEndpoint)
                 .Build();
             
             builder.Validate().ThrowIfContainsFailure();

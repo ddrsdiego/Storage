@@ -4,10 +4,8 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using Providers;
-    using Read;
     using Storage.Read;
     using Storage.Write;
-    using Write;
 
     public sealed class DynamoDbStorageContentProvider : StorageContentProvider
     {

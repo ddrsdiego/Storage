@@ -1,5 +1,6 @@
 ﻿namespace Rydo.Storage.Write
 {
+    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IStorageClientWrite
@@ -9,9 +10,10 @@
         /// </summary>
         /// <param name="key"></param>
         /// <param name="payload"></param>
+        /// <param name="cancellationToken"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask<WriteResponse> Upsert<T>(string key, T payload);
+        ValueTask<WriteResponse> Upsert<T>(string key, T payload, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -19,9 +21,11 @@
         /// <param name="key"></param>
         /// <param name="sortKey"></param>
         /// <param name="payload"></param>
+        /// <param name="cancellationToken"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload);
+        ValueTask<WriteResponse> Upsert<T>(string key, string sortKey, T payload,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 

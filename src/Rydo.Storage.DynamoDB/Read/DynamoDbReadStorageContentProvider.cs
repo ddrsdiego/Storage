@@ -11,10 +11,6 @@
     using Microsoft.Extensions.Logging;
     using Rydo.Storage.Extensions;
     using Rydo.Storage.Read;
-    //
-    // public interface IDynamoDbReadStorageContentProvider : IDbReadStorageContentProvider
-    // {
-    // }
 
     internal sealed class DynamoDbReadStorageContentProvider : IDbReadStorageContentProvider
     {
@@ -34,7 +30,7 @@
         {
             var sw = Stopwatch.StartNew();
 
-            if (!_modelTypeContextContainer.TryGetModel(batch.ModeTypeName!, out var modelTypeContext))
+            if (!_modelTypeContextContainer.TryGetModel(batch.ModeTypeName, out var modelTypeContext))
                 throw new InvalidOperationException("topicDefinition.TopicName");
 
             _storageService = (IDynamoDbStorageService) modelTypeContext.StorageService;

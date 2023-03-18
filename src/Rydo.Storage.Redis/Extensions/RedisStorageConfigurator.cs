@@ -33,7 +33,7 @@
                     };
 
                     var modelTypeContext =
-                        new ModelTypeContext(modelTypeDefinition, new RedisStorageServiceService(redisConfiguration));
+                        new ModelTypeContext(modelTypeDefinition, new RedisStorageService(redisConfiguration));
 
                     modelTypeContainer.AddModelType(modelTypeContext);
                 }
