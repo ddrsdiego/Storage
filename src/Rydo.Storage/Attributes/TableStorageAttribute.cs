@@ -6,12 +6,17 @@
 
     public sealed class TableStorageAttribute : Attribute
     {
-        public const string FullNameTopicProducerAttribute = "Rydo.Storage.Attributes.TableStorageAttribute";
-        public const int TableNamePosition = 0;
+        internal const int TableNamePosition = 0;
+        internal const string FullNameTopicProducerAttribute = "Rydo.Storage.Attributes.TableStorageAttribute";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TableStorageAttribute(string tableName)
         {
-            TableName = tableName;
+            TableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
         }
 
         internal string TableName { get; }

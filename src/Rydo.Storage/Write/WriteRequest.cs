@@ -40,7 +40,7 @@
         public T GetRaw<T>()
         {
             var reader = new Utf8JsonReader(new ReadOnlySequence<byte>(Payload));
-            return JsonSerializer.Deserialize<T>(ref reader)!;
+            return JsonSerializer.Deserialize<T>(ref reader);
         }
 
         public async ValueTask<T> GetRawAsync<T>()

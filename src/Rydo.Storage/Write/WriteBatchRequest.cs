@@ -1,31 +1,32 @@
 ﻿namespace Rydo.Storage.Write
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
+    using Helpers;
 
     public interface IWriteBatchRequest : IBatchRequest, IEnumerable<WriteRequest>
     {
         string ModeTypeName { get; }
 
         string TableName { get; }
-        
+
         IEnumerable<StorageItem> StorageItems { get; }
 
         void TryAdd(WriteRequest writeRequest);
     }
 
-    public sealed class WriteBatchRequest : IWriteBatchRequest
+    internal sealed class WriteBatchRequest : IWriteBatchRequest
     {
         private readonly object _sync = new object();
         private readonly Dictionary<string, WriteRequest> _writeRequests;
 
         internal WriteBatchRequest(int capacity)
         {
-            BatchId = Guid.NewGuid().ToString().Split('-')[0];
+            BatchId = BatchId = $"B-W-ID-{GeneratorOperationId.Generate()}";
+            ;
             _writeRequests = new Dictionary<string, WriteRequest>(capacity);
         }
 
@@ -36,18 +37,25 @@
             get
             {
                 if (string.IsNullOrEmpty(_modeTypeName))
-                    _modeTypeName = _writeRequests.First().Value.ModelTypeDefinition?.ModeTypeName!;
+                {
+                    _modeTypeName = _writeRequests.First().Value.ModelTypeDefinition?.ModeTypeName;
+                }
+
                 return _modeTypeName;
             }
         }
 
         private string _tableName = string.Empty;
+
         public string TableName
         {
             get
             {
                 if (string.IsNullOrEmpty(_tableName))
+                {
                     _tableName = _writeRequests.First().Value.ModelTypeDefinition?.TableName!;
+                }
+
                 return _tableName;
             }
         }
@@ -55,30 +63,36 @@
         public string BatchId { get; }
 
         private int _count;
-        public int Count => _count;
+
+        public int Count
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _count;
+                }
+            }
+        }
 
         public void TryAdd(WriteRequest writeRequest) => InternalAdd(writeRequest);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool InternalAdd(WriteRequest writeRequest)
         {
-            var isNewToken = false;
-
             lock (_sync)
             {
-                if (writeRequest.IsInvalidRequest) return isNewToken;
+                if (writeRequest.IsInvalidRequest) return false;
 
                 var key = writeRequest.ToStorageItem().Key.Value;
 
-                if (_writeRequests.TryGetValue(key, out _)) return isNewToken;
+                if (_writeRequests.TryGetValue(key, out _)) return false;
 
                 _writeRequests[key] = writeRequest;
                 Interlocked.Increment(ref _count);
-                
-                isNewToken = true;
             }
 
-            return isNewToken;
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

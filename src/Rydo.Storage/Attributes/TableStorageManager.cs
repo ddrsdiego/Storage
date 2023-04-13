@@ -16,11 +16,11 @@
             _lockObject = new object();
             _cache = ImmutableDictionary<string, string>.Empty;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryExtractTopicName(object model, out string tableName) =>
+        
+        public bool TryExtractTableName(object model, out string tableName) =>
             ExecuteTryExtractTopicName(model, out tableName);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteTryExtractTopicName(object model, out string tableName)
         {
             tableName = string.Empty;
@@ -29,9 +29,6 @@
                 return false;
 
             var modeFullName = model?.GetType().FullName;
-
-            if (_cache.TryGetValue(modeFullName!, out tableName))
-                return true;
             
             lock (_lockObject)
             {

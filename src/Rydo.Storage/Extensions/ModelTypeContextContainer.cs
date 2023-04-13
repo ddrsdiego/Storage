@@ -32,7 +32,9 @@
         public void AddModelType(ModelTypeContext modelTypeContext)
         {
             if (Entries.TryGetValue(modelTypeContext.Definition.ModeTypeName, out _))
+            {
                 throw new InvalidOperationException("topicDefinition.TopicName");
+            }
             
             Entries = Entries.Add(modelTypeContext.Definition.ModeTypeName, modelTypeContext);
         }

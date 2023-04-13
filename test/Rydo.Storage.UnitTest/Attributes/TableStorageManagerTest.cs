@@ -22,7 +22,7 @@
             var model = new DummyModel { };
             var sut = new TableStorageManager(_logger);
 
-            var res = sut.TryExtractTopicName(model, out var tableName);
+            var res = sut.TryExtractTableName(model, out var tableName);
 
             res.Should().BeTrue();
             tableName.Should().Be(tableNameModel);

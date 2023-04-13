@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Logging;
     using Providers;
     using Read;
+    using Read.Observers;
     using Rydo.Storage.Extensions;
     using Redis;
     using Write;
@@ -44,7 +45,15 @@
             configurator.Services.AddSingleton<IStorageConfiguratorBuilder>(builder);
             configurator.Services.AddSingleton<IStorageConfiguratorBuilder<RedisModelTypeDefinitionBuilder>>(builder);
             configurator.Services.AddSingleton<IStorageContentProvider, RedisStorageContentProvider>();
-            configurator.Services.AddSingleton<IDbReadStorageContentProvider, RedisReadStorageContentProvider>();
+            configurator.Services.AddSingleton<IDbReadStorageContentProvider>(sp =>
+            {
+                var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+                var modelTypeContextContainer = sp.GetRequiredService<IModelTypeContextContainer>();
+                var redisReadStorageContentProvider = new RedisReadStorageContentProvider(modelTypeContextContainer);
+                redisReadStorageContentProvider.ConnectDbReadStorageContentProviderObserver(new LogDbReadStorageContentProviderObserver(loggerFactory));
+
+                return redisReadStorageContentProvider;
+            });
             configurator.Services.AddSingleton<IDbWriteStorageContentProvider, RedisWriteStorageContentProvider>();
         }
     }

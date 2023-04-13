@@ -2,6 +2,7 @@ namespace Rydo.Storage.Read
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
@@ -17,12 +18,14 @@ namespace Rydo.Storage.Read
         private long _nextId;
         private readonly object _syncLoc;
         private readonly Dictionary<long, ReadRequest> _readRequests;
-
+        private readonly Stopwatch _stopwatchReadBatchRequest;
         internal ReadBatchRequest(int capacity)
         {
             _syncLoc = new object();
             _readRequests = new Dictionary<long, ReadRequest>(capacity);
-            BatchId = $"BATCH-ID-{GeneratorOperationId.Generate()}";
+            BatchId = $"B-R-ID-{GeneratorOperationId.Generate()}";
+            
+            _stopwatchReadBatchRequest = Stopwatch.StartNew();
         }
 
         private string _modeTypeName = string.Empty;
@@ -32,18 +35,27 @@ namespace Rydo.Storage.Read
             get
             {
                 if (string.IsNullOrEmpty(_modeTypeName))
+                {
                     _modeTypeName = _readRequests.Values.First().Definition.ModeTypeName;
+                }
                 return _modeTypeName;
             }
         }
 
         private string _tableName = string.Empty;
+
+        internal void StopBatchReadRequestWatch() => _stopwatchReadBatchRequest.Stop();
+
+        public long ReadBatchRequestElapsedMilliseconds => _stopwatchReadBatchRequest.ElapsedMilliseconds;
+        
         public string TableName
         {
             get
             {
                 if (string.IsNullOrEmpty(_tableName))
+                {
                     _tableName = _readRequests.First().Value.Definition?.TableName;
+                }
                 return _tableName;
             }
         }
@@ -55,19 +67,20 @@ namespace Rydo.Storage.Read
         {
             var isNewToken = true;
 
-            var id = Interlocked.Increment(ref _nextId);
-
             lock (_syncLoc)
             {
+                var id = Interlocked.Increment(ref _nextId);
+                
                 var key = readRequest.ToStorageItemKey().Value!;
 
                 if (_readRequests.TryGetValue(id, out _))
                     isNewToken = false;
 
                 _readRequests.Add(id, readRequest);
+                
+                Interlocked.Increment(ref _counter);
+                
             }
-
-            Interlocked.Increment(ref _counter);
 
             return isNewToken;
         }

@@ -26,7 +26,7 @@
 
             _ = _storageClient.Reader.ReadAsync<CustomerPositionConsolidated>(accountNumber, futureReadResponse, cancellationToken);
 
-            return futureReadResponse.ReadTask.WriteResponseAsync(Response, cancellationToken);
+            return futureReadResponse.ReadTask.WriteToPipeAsync(Response, cancellationToken);
         }
     }
 }

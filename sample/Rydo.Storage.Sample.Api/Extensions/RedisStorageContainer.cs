@@ -17,6 +17,9 @@
                     
                     redis.SetReadEndpoint("localhost:6379");
                     redis.SetWriteEndpoint("localhost:6379");
+                                        
+                    // redis.SetReadEndpoint("rydo-storage-sample.redis.cache.windows.net:6380,password=ua9c2xkTL7rargw15jb53VjkOekAKZiv1AzCaJaEUOY=,ssl=True,abortConnect=False");
+                    // redis.SetWriteEndpoint("rydo-storage-sample.redis.cache.windows.net:6380,password=ua9c2xkTL7rargw15jb53VjkOekAKZiv1AzCaJaEUOY=,ssl=True,abortConnect=False");
 
                     redis.TryAddModelType<CustomerPositionConsolidated>(definition =>
                     {

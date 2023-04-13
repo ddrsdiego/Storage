@@ -1,13 +1,6 @@
 namespace Rydo.Storage.Write
 {
     using System;
-    using Microsoft.AspNetCore.Http;
-
-    public enum WriteResponseStatus
-    {
-        Created = StatusCodes.Status201Created,
-        InternalServerError = StatusCodes.Status500InternalServerError
-    }
 
     public readonly struct WriteResponse
     {

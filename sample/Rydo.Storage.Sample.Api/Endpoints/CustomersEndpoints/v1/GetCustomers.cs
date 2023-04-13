@@ -20,15 +20,16 @@
         }
 
         [HttpGet("api/v1/customers/{amount:int}")]
-        public override async Task<ActionResult> HandleAsync(int amount, CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<ActionResult> HandleAsync(int amount, CancellationToken cancellationToken = new())
         {
             var customers = CustomerModelHelper.GetCustomers(amount);
 
             var sw = Stopwatch.StartNew();
-            var tasks = new List<ValueTask<ReadResponse>>(customers.Count);
-            foreach (var customer in customers)
+            var tasks = new List<ValueTask<ReadResponse>>(customers.Length);
+            
+            for (var index = 0; index < customers.Length; index++)
             {
-                var task = _storageClient.Reader.Read<Customer>(customer.AccountNumber, cancellationToken);
+                var task = _storageClient.Reader.Read<Customer>(customers[index].AccountNumber, cancellationToken);
                 tasks.Add(task);
             }
 

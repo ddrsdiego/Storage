@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Abstractions.Observers;
+    using Abstractions.Observers.Observables;
+    using Abstractions.Utils;
     using Microsoft.Extensions.Logging;
     using Read;
     using StackExchange.Redis;
@@ -15,30 +17,29 @@
     [SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]
     internal sealed class RedisReadStorageContentProvider : IDbReadStorageContentProvider
     {
-        private readonly ILogger<RedisReadStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
+        private readonly DbReadStorageContentProviderObservable _observable;
         private IRedisStorageService? _redisServiceCache;
 
-        public RedisReadStorageContentProvider(ILogger<RedisReadStorageContentProvider> logger,
-            IModelTypeContextContainer modelTypeContextContainer)
+        public RedisReadStorageContentProvider(IModelTypeContextContainer modelTypeContextContainer)
         {
-            _logger = logger;
             _modelTypeContextContainer = modelTypeContextContainer;
+            _observable = new DbReadStorageContentProviderObservable();
         }
 
         public async Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default)
         {
             if (!_modelTypeContextContainer.TryGetModel(batch.ModeTypeName!, out var modelTypeContext))
-                throw new InvalidOperationException("topicDefinition.TopicName");
+            {
+                // What Happened: Unable to locate settings for Model: Test
+                // Why Happened An attempt was made to read the Test model but it was not configured properly
+                // Review the Model Test settings, it may be that the model has not been included in the settings.
+            }
 
             _redisServiceCache = (IRedisStorageService) modelTypeContext.StorageService;
 
-            var sw = Stopwatch.StartNew();
-            _logger.LogInformation("[{BatchId}] - Starting query for {BatchCount} item(s) on {TableName} table", 
-                batch.BatchId,
-                batch.Count,
-                batch.TableName);
-
+            await _observable.PreExecuteRead(batch);
+            
             var readTasks = InitReadTasks(batch, batch.TableName);
             foreach (var (request, task) in readTasks)
             {
@@ -56,11 +57,7 @@
                 }
             }
 
-            _logger.LogInformation("[{BatchId}] - Finishing query for {BatchCount} item(s) on {TableName} table, Elapsed Time: {ElapsedMilliseconds}", 
-                batch.BatchId,
-                batch.Count,
-                batch.TableName,
-                sw.ElapsedMilliseconds);
+            await _observable.PostExecuteRead(batch);
             
             await Task.Delay(TimeSpan.FromMilliseconds(1), cancellationToken);
         }
@@ -89,5 +86,8 @@
 
             return readTasks;
         }
+
+        public IConnectHandle ConnectDbReadStorageContentProviderObserver(
+            IDbReadStorageContentProviderObserver observer) => _observable.Connect(observer);
     }
 }

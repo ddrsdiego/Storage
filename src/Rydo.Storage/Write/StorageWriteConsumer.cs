@@ -8,6 +8,7 @@ namespace Rydo.Storage.Write
     using Extensions;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using Providers;
 
     public interface IStorageWriterConsumer
@@ -20,15 +21,18 @@ namespace Rydo.Storage.Write
         private const int Capacity = 1024 * 1024;
 
         private readonly Task _readerTask;
+        private readonly ILogger<StorageWriterConsumer> _logger;
         private readonly IStorageWrite _storageWrite;
         private readonly IStorageConfiguratorBuilder _storageConfiguratorBuilder;
         private readonly Channel<WriteRequest> _queue;
         private readonly CancellationToken _cancellationToken;
         private readonly TaskCompletionSource<bool> _taskCompletion;
 
-        public StorageWriterConsumer(IStorageWrite storageWrite, IStorageConfiguratorBuilder storageConfiguratorBuilder,
+        public StorageWriterConsumer(ILogger<StorageWriterConsumer> logger, IStorageWrite storageWrite,
+            IStorageConfiguratorBuilder storageConfiguratorBuilder,
             IServiceProvider serviceProvider)
         {
+            _logger = logger;
             _storageWrite = storageWrite;
             _storageConfiguratorBuilder = storageConfiguratorBuilder;
 
@@ -58,9 +62,9 @@ namespace Rydo.Storage.Write
             var taskResult = writeTask.IsCompletedSuccessfully
                 ? new ValueTask(Task.CompletedTask)
                 : SlowWrite(writeTask);
-            
+
             Internals.Metrics.Gauges.WriteRequestInQueue.Inc();
-            
+
             return taskResult;
 
             static async ValueTask SlowWrite(ValueTask task) => await task;
@@ -69,7 +73,6 @@ namespace Rydo.Storage.Write
         private async Task TryTerminateChannel()
         {
             _queue.Writer.Complete();
-
             await _taskCompletion.Task;
         }
 
@@ -93,7 +96,7 @@ namespace Rydo.Storage.Write
                         {
                             batch.TryAdd(writeRequest);
                             counter++;
-                            
+
                             Internals.Metrics.Gauges.WriteRequestInQueue.Dec();
                         }
 
@@ -107,6 +110,7 @@ namespace Rydo.Storage.Write
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "");
                 Console.WriteLine(e);
             }
             finally
@@ -116,5 +120,17 @@ namespace Rydo.Storage.Write
                 }
             }
         }
+    }
+}
+
+public class DefaultErrorMessage
+{
+    public string WhatHappened { get; }
+    public string WhyHappened { get; }
+
+    public DefaultErrorMessage(string whatHappened, string whyHappened)
+    {
+        WhatHappened = whatHappened;
+        WhyHappened = whyHappened;
     }
 }

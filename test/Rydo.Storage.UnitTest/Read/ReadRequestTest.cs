@@ -12,12 +12,16 @@
         [Fact]
         public void Test()
         {
-            var readRequest = new ReadRequest("5090016", new ModelTypeDefinition(typeof(DummyModel)),
+            const string accountNumber = "5090016";
+            
+            var readRequest = new ReadRequest(accountNumber, new ModelTypeDefinition(typeof(DummyModel)),
                 FutureReadResponse.GetInstance());
+
+            var payload = JsonSerializer.SerializeToUtf8Bytes(new DummyModel {AccountNumber = accountNumber});
             var writeRequest = WriteRequest
                 .Builder(WriteRequestOperation.Upsert, FutureWriteResponse.GetInstance())
-                .WithKey("5090016")
-                .WithPayload(JsonSerializer.SerializeToUtf8Bytes(new DummyModel {AccountNumber = "5090016"}))
+                .WithKey(accountNumber)
+                .WithPayload(payload)
                 .Build();
 
             var storageItem = writeRequest.ToStorageItem();

@@ -18,27 +18,27 @@ export default function () {
     
 	const req1 = {
 		method: 'GET',
-		url: 'http://localhost:5093/position/consolidate/000001',
+		url: 'http://localhost:5093/api/v1/customers/position/consolidate/000001',
 	};
 
 	const req2 = {
 		method: 'GET',
-		url: 'http://localhost:5093/position/consolidate/000002',
+		url: 'http://localhost:5093/api/v1/customers/position/consolidate/000002',
 	};
 
 	const req3 = {
 		method: 'GET',
-		url: 'http://localhost:5093/position/consolidate/000003',
+		url: 'http://localhost:5093/api/v1/customers/position/consolidate/000003',
 	};
 
 	const req4 = {
 		method: 'GET',
-		url: 'http://localhost:5093/position/consolidate/000004',
+		url: 'http://localhost:5093/api/v1/customers/position/consolidate/000004',
 	};
 
 	const req5 = {
 		method: 'GET',
-		url: 'http://localhost:5093/position/consolidate/000100',
+		url: 'http://localhost:5093/api/v1/customers/position/consolidate/000100',
 	};  
 
 	const responses = http.batch([req1, req2, req3, req4, req5]);

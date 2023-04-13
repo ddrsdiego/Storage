@@ -22,7 +22,7 @@
             var futureReadResponse = FutureReadResponse.GetInstance();
 
             _ = _storageClient.Reader.ReadAsync<Customer>(accountNumber, futureReadResponse, cancellationToken);
-            return futureReadResponse.ReadTask.WriteResponseAsync(Response, cancellationToken: cancellationToken);
+            return futureReadResponse.ReadTask.WriteToPipeAsync(Response, cancellationToken: cancellationToken);
         }
     }
 }

@@ -2,10 +2,10 @@
 {
     using Ardalis.ApiEndpoints;
     using Microsoft.AspNetCore.Mvc;
-    using Rydo.Storage.Read;
-    using Rydo.Storage.Sample.Core.Models;
-    using Rydo.Storage.Serialization;
-    using Rydo.Storage.Write;
+    using Read;
+    using Core.Models;
+    using Serialization;
+    using Write;
 
     public sealed class PostCustomersPositionConsolidate : EndpointBaseAsync
         .WithRequest<string>
@@ -40,7 +40,7 @@
                 Customer = await _serializer.DeserializeAsync<Customer>(customer.Value),
                 Position = await _serializer.DeserializeAsync<CustomerPosition>(customerPosition.Value)
             };
-
+            
             var response = await _storageClient.Write.Upsert(accountNumber, customerPositionConsolidated, cancellationToken);
             if (response.Status == WriteResponseStatus.Created)
                 return Created("", response.Request.GetRaw<CustomerPositionConsolidated>());

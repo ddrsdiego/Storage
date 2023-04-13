@@ -15,11 +15,11 @@
         /// <param name="taskReadResponse"></param>
         /// <param name="response"></param>
         /// <param name="cancellationToken"></param>
-        public static async Task WriteResponseAsync(this ValueTask<ReadResponse> taskReadResponse,
+        public static async Task WriteToPipeAsync(this ValueTask<ReadResponse> taskReadResponse,
             HttpResponse response, CancellationToken cancellationToken = default)
         {
             var readResponse = await taskReadResponse;
-            await readResponse.WriteResponseAsync(response, cancellationToken);
+            await readResponse.WriteToPipeAsync(response, cancellationToken);
         }
 
         /// <summary>
@@ -28,11 +28,11 @@
         /// <param name="taskReadResponse"></param>
         /// <param name="response"></param>
         /// <param name="cancellationToken"></param>
-        public static async Task WriteResponseAsync(this Task<ReadResponse> taskReadResponse, HttpResponse response,
+        public static async Task WriteToPipeAsync(this Task<ReadResponse> taskReadResponse, HttpResponse response,
             CancellationToken cancellationToken = default)
         {
             var readResponse = await taskReadResponse;
-            await readResponse.WriteResponseAsync(response, cancellationToken);
+            await readResponse.WriteToPipeAsync(response, cancellationToken);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@
         /// <param name="response"></param>
         /// <param name="cancellationToken"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task WriteResponseAsync(this ReadResponse readResponse, HttpResponse response,
+        public static async Task WriteToPipeAsync(this ReadResponse readResponse, HttpResponse response,
             CancellationToken cancellationToken = default)
         {
             response.StatusCode = (int) readResponse.StatusCode;
@@ -56,53 +56,38 @@
                 await response.BodyWriter.WriteAsync(
                     new ReadOnlyMemory<byte>(JsonSerializer.SerializeToUtf8Bytes(new { })), cancellationToken);
 
+            await response.BodyWriter.FlushAsync(cancellationToken);
             await response.BodyWriter.CompleteAsync();
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="pipe"></param>
-        private static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe) =>
-            value.WriteToPipe(pipe, Encoding.UTF8.GetEncoder());
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="pipe"></param>
-        /// <param name="encoder"></param>
-        private static void WriteToPipe(this IReadOnlyList<byte> value, PipeWriter pipe, Encoder encoder) =>
-            pipe.WriteToPipe(value, encoder);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="pipe"></param>
+        /// <param name="writer"></param>
         /// <param name="value"></param>
-        public static void WriteToPipe(this PipeWriter pipe, IReadOnlyList<byte> value) =>
-            pipe.WriteToPipe(value, Encoding.UTF8.GetEncoder());
+        private static void WriteToPipe(this PipeWriter writer, ReadOnlySpan<byte> value) =>
+            writer.WriteToPipe(value, Encoding.UTF8.GetEncoder());
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="pipe"></param>
+        /// <param name="writer"></param>
         /// <param name="value"></param>
         /// <param name="encoder"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void WriteToPipe(this PipeWriter pipe, IReadOnlyList<byte> value, Encoder encoder)
+        private static void WriteToPipe(this PipeWriter writer, ReadOnlySpan<byte> value, Encoder encoder)
         {
-            Span<char> charSpan = stackalloc char[value.Count];
-            for (var counter = 0; counter < value.Count; counter++)
+            Span<char> charSpan = stackalloc char[value.Length];
+            for (var counter = 0; counter < value.Length; counter++)
             {
                 charSpan[counter] = (char) value[counter];
             }
 
             var bytesNeeded = encoder.GetByteCount(charSpan, true);
-            var bytesWritten = encoder.GetBytes(charSpan, pipe.GetSpan(bytesNeeded), true);
+            var bytesWritten = encoder.GetBytes(charSpan, writer.GetSpan(bytesNeeded), true);
 
-            pipe.Advance(bytesWritten);
+            // Advance the PipeWriter to indicate how much data was written.
+            writer.Advance(bytesWritten);
         }
     }
 }

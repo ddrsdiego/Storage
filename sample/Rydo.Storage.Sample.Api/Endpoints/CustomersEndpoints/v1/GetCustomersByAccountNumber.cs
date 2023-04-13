@@ -19,7 +19,7 @@
         public override async Task HandleAsync(string accountNumber, CancellationToken cancellationToken = new())
         {
             var response = await _storageClient.Reader.Read<Customer>(accountNumber, cancellationToken);
-            await response.WriteResponseAsync(Response, cancellationToken: cancellationToken);
+            await response.WriteToPipeAsync(Response, cancellationToken: cancellationToken);
         }
     }
 }

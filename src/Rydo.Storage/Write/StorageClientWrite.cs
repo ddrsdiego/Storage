@@ -6,7 +6,7 @@
     using Async;
     using Sync;
 
-    public sealed class StorageClientWrite : IStorageClientWrite
+    internal sealed class StorageClientWrite : IStorageClientWrite
     {
         private readonly IStorageClientWriteSync _storageClientWriteSync;
         private readonly IStorageClientWriterAsync _storageClientWriterAsync;

@@ -15,15 +15,28 @@
 
     public abstract class StorageContentProvider : IStorageContentProvider
     {
-        protected StorageContentProvider(ILogger logger)
+        protected StorageContentProvider(ILogger logger, IDbWriteStorageContentProvider writeStorageContentProvider,
+            IDbReadStorageContentProvider readStorageContentProvider)
         {
             Logger = logger;
+            WriteStorageContentProvider = writeStorageContentProvider;
+            ReadStorageContentProvider = readStorageContentProvider;
         }
 
-        protected ILogger Logger { get; }
+        private ILogger Logger { get; }
 
-        public abstract Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default);
+        private IDbWriteStorageContentProvider WriteStorageContentProvider { get; }
 
-        public abstract Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default);
+        private IDbReadStorageContentProvider ReadStorageContentProvider { get; }
+
+        public Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default)
+        {
+            return ReadStorageContentProvider.Read(batch, cancellationToken);
+        }
+
+        public Task Write(IWriteBatchRequest writeBatchRequest, CancellationToken cancellationToken = default)
+        {
+            return WriteStorageContentProvider.Write(writeBatchRequest, cancellationToken);
+        }
     }
 }

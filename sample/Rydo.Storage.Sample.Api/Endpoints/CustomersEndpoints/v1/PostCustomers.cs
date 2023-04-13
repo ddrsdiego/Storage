@@ -20,10 +20,10 @@
         {
             var customers = CustomerModelHelper.GetCustomers(amount);
 
-            var tasks = new List<ValueTask<WriteResponse>>(customers.Count);
-            foreach (var customer in customers)
+            var tasks = new List<ValueTask<WriteResponse>>(customers.Length);
+            for (var index = 0; index < customers.Length; index++)
             {
-                tasks.Add(_storageClient.Write.Upsert(customer.AccountNumber, customer, cancellationToken));
+                tasks.Add(_storageClient.Write.Upsert(customers[index].AccountNumber, customers[index], cancellationToken));
             }
 
             foreach (var task in tasks)

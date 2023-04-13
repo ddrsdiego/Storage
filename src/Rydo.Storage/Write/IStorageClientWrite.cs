@@ -6,9 +6,9 @@
     public interface IStorageClientWrite
     {
         /// <summary>
-        /// 
+        /// Write to the database returning a response containing the result of the operation.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <param name="payload"></param>
         /// <param name="cancellationToken"></param>
         /// <typeparam name="T"></typeparam>
@@ -16,9 +16,9 @@
         ValueTask<WriteResponse> Upsert<T>(string key, T payload, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// 
+        /// Write to the database returning a response containing the result of the operation.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <param name="sortKey"></param>
         /// <param name="payload"></param>
         /// <param name="cancellationToken"></param>
@@ -30,7 +30,7 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <param name="payload"></param>
         /// <param name="futureWriteResponse"></param>
         /// <typeparam name="T"></typeparam>
@@ -40,7 +40,7 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <param name="sortKey"></param>
         /// <param name="payload"></param>
         /// <param name="futureWriteResponse"></param>
@@ -51,7 +51,7 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         ValueTask<WriteResponse> Remove<T>(string key);
@@ -59,7 +59,7 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Unique identification key for the resource that will be created in the database</param>
         /// <param name="sortKey"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>

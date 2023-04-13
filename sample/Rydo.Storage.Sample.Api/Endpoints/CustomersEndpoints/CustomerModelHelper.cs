@@ -4,7 +4,7 @@
 
     internal static class CustomerModelHelper
     {
-        public static List<Customer> GetCustomers(int amount)
+        public static Customer[] GetCustomers(int amount)
         {
             var customers = new List<Customer>(amount);
             var random = new Random();
@@ -23,7 +23,7 @@
                 });
             }
 
-            return customers;
+            return customers.ToArray();
         }
     }
 }

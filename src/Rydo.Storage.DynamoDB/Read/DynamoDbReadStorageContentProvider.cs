@@ -5,6 +5,8 @@
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
+    using Abstractions.Observers;
+    using Abstractions.Utils;
     using Amazon.DynamoDBv2.Model;
     using Extensions;
     using Internals.Metrics;
@@ -69,6 +71,11 @@
 
             if (sw.ElapsedMilliseconds > TimeLimitDefault)
                 PrometheusMetrics.ReadRequestElapsedTimeExceeded(tableName, TimeLimitDefault);
+        }
+
+        public IConnectHandle ConnectDbReadStorageContentProviderObserver(IDbReadStorageContentProviderObserver observer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

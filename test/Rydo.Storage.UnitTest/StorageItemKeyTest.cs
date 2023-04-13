@@ -30,6 +30,7 @@
             
             storageItemKey1.Value.Should().Be(value);
             storageItemKey1.Should().Be(storageItemKey2);
+            storageItemKey1.IsComposed.Should().BeTrue();
         }
     }
 }
