@@ -4,7 +4,7 @@
     using Abstractions.Observers;
     using Microsoft.Extensions.Logging;
 
-    public class LogDbReadStorageContentProviderObserver :
+    internal sealed class LogDbReadStorageContentProviderObserver :
         IDbReadStorageContentProviderObserver
     {
         private readonly ILogger<LogDbReadStorageContentProviderObserver> _logger;

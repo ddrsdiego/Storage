@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <PackageDescription>Storage</PackageDescription>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

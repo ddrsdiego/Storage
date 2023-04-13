@@ -4,7 +4,7 @@
     using Read;
     using Utils;
 
-    public class DbReadStorageContentProviderObservable :
+    public sealed class DbReadStorageContentProviderObservable :
         Connectable<IDbReadStorageContentProviderObserver>,
         IDbReadStorageContentProviderObserver
     {

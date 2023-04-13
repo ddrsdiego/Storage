@@ -1,6 +1,6 @@
-﻿namespace Rydo.Storage.Read
+﻿namespace Rydo.Storage.Read.Observers
 {
-    using Abstractions.Observers;
+    using Rydo.Storage.Abstractions.Observers;
     using Abstractions.Utils;
 
     public interface IDbReadStorageContentProviderObserverConnector

@@ -16,7 +16,7 @@
         /// <param name="tableName"></param>
         /// <param name="timeLimit"></param>
         /// <param name="elapsedExceeded"></param>
-        public static void ReadRequestElapsedTimeExceeded(string tableName, int timeLimit) => Counters
-            .ReadRequestElapsedTimeExceeded.WithLabels(tableName, timeLimit.ToString()).Inc();
+        public static void ReadRequestElapsedTimeExceeded(string tableName, int timeLimit) =>
+            Counters.ReadRequestElapsedTimeExceeded.WithLabels(tableName, timeLimit.ToString()).Inc();
     }
 }

@@ -2,34 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Abstractions.Observers;
-    using Abstractions.Observers.Observables;
-    using Abstractions.Utils;
-    using Microsoft.Extensions.Logging;
     using Read;
     using StackExchange.Redis;
     using Storage.Extensions;
 
-    [SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]
-    internal sealed class RedisReadStorageContentProvider : IDbReadStorageContentProvider
+    internal sealed class RedisReadStorageContentProvider : DbReadStorageContentProvider
     {
-        private readonly IModelTypeContextContainer _modelTypeContextContainer;
-        private readonly DbReadStorageContentProviderObservable _observable;
         private IRedisStorageService? _redisServiceCache;
 
         public RedisReadStorageContentProvider(IModelTypeContextContainer modelTypeContextContainer)
+            : base(modelTypeContextContainer)
         {
-            _modelTypeContextContainer = modelTypeContextContainer;
-            _observable = new DbReadStorageContentProviderObservable();
         }
 
-        public async Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default)
+        public override async Task Read(ReadBatchRequest batch, CancellationToken cancellationToken = default)
         {
-            if (!_modelTypeContextContainer.TryGetModel(batch.ModeTypeName!, out var modelTypeContext))
+            if (!ModelTypeContextContainer.TryGetModel(batch.ModeTypeName, out var modelTypeContext))
             {
                 // What Happened: Unable to locate settings for Model: Test
                 // Why Happened An attempt was made to read the Test model but it was not configured properly
@@ -38,8 +29,8 @@
 
             _redisServiceCache = (IRedisStorageService) modelTypeContext.StorageService;
 
-            await _observable.PreExecuteRead(batch);
-            
+            await Observable.PreExecuteRead(batch);
+
             var readTasks = InitReadTasks(batch, batch.TableName);
             foreach (var (request, task) in readTasks)
             {
@@ -57,8 +48,8 @@
                 }
             }
 
-            await _observable.PostExecuteRead(batch);
-            
+            await Observable.PostExecuteRead(batch);
+
             await Task.Delay(TimeSpan.FromMilliseconds(1), cancellationToken);
         }
 
@@ -86,8 +77,5 @@
 
             return readTasks;
         }
-
-        public IConnectHandle ConnectDbReadStorageContentProviderObserver(
-            IDbReadStorageContentProviderObserver observer) => _observable.Connect(observer);
     }
 }
