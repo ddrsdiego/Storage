@@ -28,7 +28,7 @@
 
             var readRequestAudit = new ReadBatchRequestAudit(batch);
 
-            _logger.LogInformation("[{log-type}] - {@ReadBatchRequestAudit}",
+            _logger.LogInformation("[{LogType}] - {@ReadBatchRequestAudit}",
                 readRequestAudit.LogType,
                 readRequestAudit);
 
