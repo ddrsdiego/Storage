@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
     using Write;
     using StackExchange.Redis;
     using Storage.Extensions;
@@ -13,15 +12,12 @@
     internal sealed class RedisWriteStorageContentProvider : IDbWriteStorageContentProvider
     {
         private const int DelayInMilliseconds = 1;
-        
+
         private IRedisStorageService? _redisServiceCache;
-        private readonly ILogger<RedisWriteStorageContentProvider> _logger;
         private readonly IModelTypeContextContainer _modelTypeContextContainer;
 
-        public RedisWriteStorageContentProvider(ILogger<RedisWriteStorageContentProvider> logger,
-            IModelTypeContextContainer modelTypeContextContainer)
+        public RedisWriteStorageContentProvider(IModelTypeContextContainer modelTypeContextContainer)
         {
-            _logger = logger;
             _modelTypeContextContainer = modelTypeContextContainer;
         }
 
@@ -58,7 +54,7 @@
             IDictionary<WriteRequest, Task<bool>> writeTasks)
         {
             var requests = writeBatchRequest.ToArray();
-            
+
             for (var index = 0; index < requests.Length; index++)
             {
                 var storageItem = requests[index].ToStorageItem();

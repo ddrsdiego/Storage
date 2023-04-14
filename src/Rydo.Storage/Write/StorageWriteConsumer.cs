@@ -111,7 +111,6 @@ namespace Rydo.Storage.Write
             catch (Exception e)
             {
                 _logger.LogError(e, "");
-                Console.WriteLine(e);
             }
             finally
             {

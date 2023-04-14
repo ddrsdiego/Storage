@@ -37,9 +37,7 @@
             get
             {
                 if (string.IsNullOrEmpty(_modeTypeName))
-                {
                     _modeTypeName = _writeRequests.First().Value.ModelTypeDefinition?.ModeTypeName;
-                }
 
                 return _modeTypeName;
             }
@@ -52,9 +50,7 @@
             get
             {
                 if (string.IsNullOrEmpty(_tableName))
-                {
                     _tableName = _writeRequests.First().Value.ModelTypeDefinition?.TableName!;
-                }
 
                 return _tableName;
             }

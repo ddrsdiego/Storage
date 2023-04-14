@@ -12,7 +12,7 @@
         private T[] _connected;
         private long _nextId;
         private readonly Dictionary<long, T> _connections;
-        
+
         protected Connectable()
         {
             _connections = new Dictionary<long, T>();

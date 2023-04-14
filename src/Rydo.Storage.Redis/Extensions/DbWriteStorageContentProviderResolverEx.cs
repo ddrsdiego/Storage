@@ -14,8 +14,7 @@
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
             var modelTypeContextContainer = sp.GetRequiredService<IModelTypeContextContainer>();
 
-            var redisWriteStorageContentProvider = new RedisWriteStorageContentProvider(
-                loggerFactory.CreateLogger<RedisWriteStorageContentProvider>(), modelTypeContextContainer);
+            var redisWriteStorageContentProvider = new RedisWriteStorageContentProvider(modelTypeContextContainer);
 
             return redisWriteStorageContentProvider;
         }

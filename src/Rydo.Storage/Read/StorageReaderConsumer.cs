@@ -33,7 +33,7 @@ namespace Rydo.Storage.Read
             _storageRead = storageRead;
             _storageConfiguratorBuilder = storageConfiguratorBuilder;
 
-        
+
             var channelOptions = new BoundedChannelOptions(Capacity)
             {
                 AllowSynchronousContinuations = true,
@@ -41,16 +41,16 @@ namespace Rydo.Storage.Read
                 SingleReader = true,
                 SingleWriter = false
             };
-        
+
             _queue = Channel.CreateBounded<ReadRequest>(channelOptions);
-        
+
             _cancellationToken = serviceProvider
                 .GetRequiredService<IHostApplicationLifetime>()
                 .ApplicationStopping;
-            
+
             _consumerTaskRunner = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        
-            _readerTask = Task.Run(ReadFromChannel);
+
+            _readerTask = Task.Run(async () => await ReadFromChannel());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -64,7 +64,7 @@ namespace Rydo.Storage.Read
                 : SlowWrite(writeTask);
 
             Internals.Metrics.Gauges.ReadRequestInQueue.Inc();
-            
+
             return result;
 
             static async ValueTask SlowWrite(ValueTask task) => await task;
@@ -80,7 +80,7 @@ namespace Rydo.Storage.Read
                 {
                     if (_cancellationToken.IsCancellationRequested)
                         break;
-                    
+
                     while (await _queue.Reader.WaitToReadAsync())
                     {
                         var counter = 0;
@@ -90,7 +90,7 @@ namespace Rydo.Storage.Read
                         {
                             batch.TryAdd(readRequest);
                             counter++;
-                            
+
                             Internals.Metrics.Gauges.ReadRequestInQueue.Dec();
                         }
 

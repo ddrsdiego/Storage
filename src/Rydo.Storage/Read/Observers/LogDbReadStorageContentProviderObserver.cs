@@ -14,7 +14,7 @@
 
         public Task PreExecuteRead(ReadBatchRequest batch)
         {
-            _logger.LogInformation("[{BatchId}] - Starting query for {BatchCount} item(s) on {TableName} table",
+            _logger.LogDebug("[{BatchId}] - Starting query for {BatchCount} item(s) on {TableName} table",
                 batch.BatchId,
                 batch.Count,
                 batch.TableName);
@@ -25,15 +25,35 @@
         public Task PostExecuteRead(ReadBatchRequest batch)
         {
             batch.StopBatchReadRequestWatch();
-            
-            _logger.LogInformation(
-                "[{BatchId}] - Finishing query for {BatchCount} item(s) on {TableName} table, Elapsed Time: {ElapsedMilliseconds}",
-                batch.BatchId,
-                batch.Count,
-                batch.TableName,
-                batch.ReadBatchRequestElapsedMilliseconds);
+
+            var readRequestAudit = new ReadBatchRequestAudit(batch);
+
+            _logger.LogInformation("[{log-type}] - {@ReadBatchRequestAudit}",
+                readRequestAudit.LogType,
+                readRequestAudit);
 
             return Task.CompletedTask;
         }
+    }
+
+    internal abstract class RequestAudit
+    {
+        protected RequestAudit(string logType) => LogType = logType;
+
+        public string LogType { get; }
+    }
+
+    internal sealed class ReadBatchRequestAudit :
+        RequestAudit
+    {
+        private readonly ReadBatchRequest _request;
+
+        public ReadBatchRequestAudit(ReadBatchRequest request) :
+            base("finish-read-request-audit") => _request = request;
+
+        public string BatchId => _request.BatchId;
+        public string TableName => _request.TableName;
+        public int Lenght => _request.Count;
+        public long ElapsedMilliseconds => _request.ReadBatchRequestElapsedMilliseconds;
     }
 }
