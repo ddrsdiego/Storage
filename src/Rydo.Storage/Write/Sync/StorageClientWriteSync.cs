@@ -35,7 +35,7 @@ namespace Rydo.Storage.Write.Sync
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (payload == null) throw new ArgumentNullException(nameof(payload));
-            
+
             var modelName = ModelTypeDefinitionHelper.SanitizeModeTypeName(payload.GetType());
 
             if (!_modelTypeContextContainer.TryGetModel(modelName, out var modelTypeContext))
@@ -51,8 +51,8 @@ namespace Rydo.Storage.Write.Sync
                 .WithSortKey(sortKey)
                 .WithPayload(payloadAsUtf8)
                 .Build();
-
-            _ = _storageWriterConsumer.EnqueueRequest(writeRequest);
+            
+            _ = modelTypeContext.WriteContext.Consumer.EnqueueRequest(writeRequest);
 
             return await writeRequest.Response.WriteTask;
         }

@@ -11,7 +11,7 @@
         ImmutableDictionary<string, ModelTypeContext> Entries { get; }
         
         void AddModelType(ModelTypeContext modelTypeContext);
-
+       
         bool TryGetModel(string modelName, out ModelTypeContext modelTypeContext);
     }
 

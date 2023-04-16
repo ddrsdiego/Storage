@@ -30,7 +30,7 @@
             {
                 var logger = sp.GetService<ILogger<StorageMemory>>();
                 
-                var memoryCache = sp.GetService<MemoryCache>();
+                var memoryCache = sp.GetService<IMemoryCache>();
                 var memoryRead = sp.GetService<IStorageMemoryRead>();
                 var memoryWrite = sp.GetService<IStorageMemoryWrite>();
                 return new StorageMemory(logger, memoryCache, memoryWrite, memoryRead);

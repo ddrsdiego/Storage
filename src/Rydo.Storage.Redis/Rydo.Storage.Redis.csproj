@@ -17,4 +17,8 @@
       <ProjectReference Include="..\Rydo.Storage\Rydo.Storage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>
